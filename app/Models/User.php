@@ -17,13 +17,13 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $fillable = [
-        'name',
         'email',
         'password',
-        'role',
         'status',
-        'address',
     ];
 
     /**
@@ -49,6 +49,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function details()
+    {
+        return $this->hasOne(UserDetails::class);
+    }
+
     /**
      * Get the courses taught by the instructor.
      */
@@ -63,8 +68,8 @@ class User extends Authenticatable
     public function enrolledCourses()
     {
         return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id')
-                    ->withPivot('enrolled_at', 'status')
-                    ->withTimestamps();
+            ->withPivot('enrolled_at', 'status')
+            ->withTimestamps();
     }
 
     /**
