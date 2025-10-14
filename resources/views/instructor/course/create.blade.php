@@ -1,11 +1,8 @@
 @props(['user' => ['name' => 'Dr. Lorenz', 'department' => 'Computer Science', 'initials' => 'JS']])
 
-<x-instructor.layout.app 
-    title="Create Course - CLSU Instructor Dashboard"
-    activeItem="courses"
-    :user="$user"
-    :notifications="['assignments' => 8, 'students' => 3]"
->
+@extends('layouts.instructor')
+@section('content')
+
     <div class="flex items-center justify-between mb-8">
         <h1 class="text-3xl font-bold text-gray-800">Create Course</h1>
     </div>
@@ -14,13 +11,13 @@
         <form method="POST" action="{{ route('instructor.course.store') }}" class="space-y-6">
             @csrf
             @php
-                $propsId = ["name"=>"id","label"=>"Course ID","placeholder"=>"cs701","required"=>true];
-                $propsCode = ["name"=>"code","label"=>"Course Code","placeholder"=>"CS 701 - 3 Units","required"=>true];
-                $propsTitle = ["name"=>"title","label"=>"Title","placeholder"=>"Advanced Algorithms","required"=>true];
-                $propsIcon = ["name"=>"icon","label"=>"Icon (Font Awesome class)","placeholder"=>"fas fa-microchip"];
-                $statusOptions = [["label"=>"Active","value"=>"active"],["label"=>"Draft","value"=>"draft"],["label"=>"Archived","value"=>"archived"]];
-                $propsStatus = ["name"=>"status","label"=>"Status","options"=>$statusOptions,"defaultValue"=>$statusOptions[0],"sx"=>["width"=>"100%"]];
-                $propsNextClass = ["name"=>"nextClass","label"=>"Next Class","placeholder"=>"Monday, 10:00 AM"];
+                $propsId = ["name" => "id", "label" => "Course ID", "placeholder" => "cs701", "required" => true];
+                $propsCode = ["name" => "code", "label" => "Course Code", "placeholder" => "CS 701 - 3 Units", "required" => true];
+                $propsTitle = ["name" => "title", "label" => "Title", "placeholder" => "Advanced Algorithms", "required" => true];
+                $propsIcon = ["name" => "icon", "label" => "Icon (Font Awesome class)", "placeholder" => "fas fa-microchip"];
+                $statusOptions = [["label" => "Active", "value" => "active"], ["label" => "Draft", "value" => "draft"], ["label" => "Archived", "value" => "archived"]];
+                $propsStatus = ["name" => "status", "label" => "Status", "options" => $statusOptions, "defaultValue" => $statusOptions[0], "sx" => ["width" => "100%"]];
+                $propsNextClass = ["name" => "nextClass", "label" => "Next Class", "placeholder" => "Monday, 10:00 AM"];
             @endphp
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div data-react-component="TextInput" data-props='@json($propsId)'></div>
@@ -32,7 +29,8 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea name="description" rows="5" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Course description..." required></textarea>
+                <textarea name="description" rows="5" class="w-full border border-gray-300 rounded-lg p-3"
+                    placeholder="Course description..." required></textarea>
             </div>
             <div class="flex items-center space-x-3">
                 <button class="btn-primary" type="submit">
@@ -42,4 +40,4 @@
             </div>
         </form>
     </div>
-</x-instructor.layout.app>
+@endsection

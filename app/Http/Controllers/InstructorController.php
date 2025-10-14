@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\CourseContent;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class InstructorController extends Controller
 {
@@ -85,14 +87,21 @@ class InstructorController extends Controller
 
     public function dashboard()
     {
+
+        $userId = Auth::id();
+        $userData = User::with('details')->find($userId);
+
+        abort_unless(Auth::id() === $userId, 403);
+
+
         $user = [
-            'name' => 'Dr. Lorenz',
+            'name' => $userData->details?->full_name,
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         $stats = [
             [
                 'icon' => 'fas fa-book-open',
@@ -135,7 +144,7 @@ class InstructorController extends Controller
                 'description' => 'Student feedback'
             ]
         ];
-        
+
         // Get courses from database for dashboard
         $courses = Course::all()->map(function ($course) {
             return [
@@ -153,7 +162,7 @@ class InstructorController extends Controller
                 'progress' => rand(20, 90) // Random progress for demo
             ];
         });
-        
+
         $assignments = [
             [
                 'id' => 1,
@@ -186,7 +195,7 @@ class InstructorController extends Controller
                 'priority' => 'high'
             ]
         ];
-        
+
         $students = [
             [
                 'id' => 1,
@@ -236,9 +245,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         // Get courses from database
         $allCourses = Course::all()->map(function ($course) {
             return [
@@ -257,7 +266,7 @@ class InstructorController extends Controller
                 'nextClass' => 'Tomorrow, 9:00 AM'
             ];
         });
-        
+
         return view('instructor.courses', compact('user', 'notifications', 'allCourses'));
     }
 
@@ -268,16 +277,16 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         // Get course from database
         $course = Course::find($id);
 
         if (!$course) {
             abort(404);
         }
-        
+
         // Convert to the format expected by the view
         $courseData = [
             'id' => $course->id,
@@ -317,7 +326,7 @@ class InstructorController extends Controller
                     'uploaded_at' => $content->uploaded_at->format('M j, Y g:i A')
                 ];
             });
-        
+
         return view('instructor.course.show', compact('user', 'notifications', 'courseData', 'students', 'contents'));
     }
 
@@ -328,16 +337,16 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         // Get course from database
         $course = Course::find($id);
 
         if (!$course) {
             abort(404);
         }
-        
+
         // Convert to the format expected by the view
         $courseData = [
             'id' => $course->id,
@@ -356,7 +365,7 @@ class InstructorController extends Controller
             'assignments' => 8,
             'students' => $course->enrollment_count
         ];
-        
+
         return view('instructor.course.edit', compact('user', 'notifications', 'courseData'));
     }
 
@@ -394,7 +403,7 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
         $students = [
             ['id' => 1, 'name' => 'Francis', 'email' => 'john.doe@student.clsu.edu.ph', 'course' => 'CS 101', 'status' => 'Active'],
@@ -412,9 +421,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.assignments', compact('user', 'notifications'));
     }
 
@@ -425,9 +434,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.grades', compact('user', 'notifications'));
     }
 
@@ -438,9 +447,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.analytics', compact('user', 'notifications'));
     }
 
@@ -451,9 +460,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.discussions', compact('user', 'notifications'));
     }
 
@@ -464,9 +473,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.resources', compact('user', 'notifications'));
     }
 
@@ -477,9 +486,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.placeholder', compact('user', 'notifications'))->with([
             'title' => 'Schedule',
             'icon' => 'fas fa-calendar-alt',
@@ -494,7 +503,7 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
         return view('instructor.course.create', compact('user', 'notifications'));
     }
@@ -506,9 +515,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.placeholder', compact('user', 'notifications'))->with([
             'title' => 'Student Details',
             'icon' => 'fas fa-user',
@@ -523,9 +532,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.placeholder', compact('user', 'notifications'))->with([
             'title' => 'Assignment Details',
             'icon' => 'fas fa-tasks',
@@ -540,9 +549,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.placeholder', compact('user', 'notifications'))->with([
             'title' => 'Create Assignment',
             'icon' => 'fas fa-plus',
@@ -557,9 +566,9 @@ class InstructorController extends Controller
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];
-        
+
         $notifications = ['assignments' => 8, 'students' => 3];
-        
+
         return view('instructor.placeholder', compact('user', 'notifications'))->with([
             'title' => 'Settings',
             'icon' => 'fas fa-cog',

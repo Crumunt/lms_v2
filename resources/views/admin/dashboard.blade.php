@@ -1,30 +1,7 @@
-@props([
-    'user' => [
-        'name' => 'Admin User',
-        'role' => 'Administrator',
-        'initials' => 'AU'
-    ],
-    'stats' => [
-        'admin_count' => 0,
-        'student_count' => 0,
-        'instructor_count' => 0,
-        'total_courses' => 0,
-        'total_materials' => 0
-    ],
-    'recentEnrollments' => [],
-    'topPerformingCourses' => [],
-    'enrollmentData' => [
-        'labels' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        'data' => [0, 0, 0, 0, 0, 0, 0]
-    ]
-])
+@extends('layouts.admin')
 
-<x-admin.layout.app 
-    title="Admin Dashboard - CLSU LMS"
-    activeItem="dashboard"
-    :user="$user"
-    :notifications="['users' => 0, 'courses' => 0]"
->
+@section('content')
+
     <!-- Welcome Section -->
     <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-white mb-8 shadow-xl">
         <div class="flex items-center justify-between">
@@ -229,4 +206,6 @@
             });
         });
     </script>
-</x-admin.layout.app>
+
+    
+@endsection

@@ -1,18 +1,6 @@
-@props([
-    'user' => [
-        'name' => 'Admin User',
-        'role' => 'Administrator',
-        'initials' => 'AU'
-    ],
-    'course' => null
-])
+@extends('layouts.admin')
 
-<x-admin.layout.app 
-    title="Course Details - CLSU LMS"
-    activeItem="courses"
-    :user="$user"
-    :notifications="['users' => 0, 'courses' => 0]"
->
+@section('content')
     <!-- Page Header -->
     <div class="mb-8">
         <div class="flex items-center justify-between">
@@ -38,12 +26,14 @@
         <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <div class="text-center">
-                    <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-book text-white text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $course->title }}</h3>
                     <p class="text-gray-600 mb-4">{{ $course->code }}</p>
-                    <span class="badge {{ $course->status === 'approved' ? 'badge-success' : ($course->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
+                    <span
+                        class="badge {{ $course->status === 'approved' ? 'badge-success' : ($course->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
                         {{ ucfirst($course->status) }}
                     </span>
                 </div>
@@ -96,11 +86,13 @@
                                         <div>
                                             <h4 class="text-sm font-semibold text-gray-800">{{ $content->title }}</h4>
                                             <p class="text-xs text-gray-500">{{ $content->description }}</p>
-                                            <p class="text-xs text-gray-400">Uploaded: {{ $content->uploaded_at->format('M d, Y') }}</p>
+                                            <p class="text-xs text-gray-400">Uploaded: {{ $content->uploaded_at->format('M d, Y') }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <span class="badge {{ $content->status === 'published' ? 'badge-success' : ($content->status === 'draft' ? 'badge-warning' : 'badge-danger') }}">
+                                        <span
+                                            class="badge {{ $content->status === 'published' ? 'badge-success' : ($content->status === 'draft' ? 'badge-warning' : 'badge-danger') }}">
                                             {{ ucfirst($content->status) }}
                                         </span>
                                     </div>
@@ -129,8 +121,10 @@
                         @foreach($course->enrollments as $enrollment)
                             <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                                        <span class="text-white text-xs font-medium">{{ substr($enrollment->student->name, 0, 2) }}</span>
+                                    <div
+                                        class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                                        <span
+                                            class="text-white text-xs font-medium">{{ substr($enrollment->student->name, 0, 2) }}</span>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-800">{{ $enrollment->student->name }}</p>
@@ -156,4 +150,4 @@
             </div>
         </div>
     </div>
-</x-admin.layout.app>
+@endsection

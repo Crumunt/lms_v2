@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class CourseSeeder extends Seeder
 {
@@ -14,8 +15,11 @@ class CourseSeeder extends Seeder
     public function run(): void
     {
         // Get the instructor
-        $instructor = User::where('role', 'instructor')->first();
-        
+        $instructor = User::whereHas('roles', function ($query) {
+            $query->where('name', 'instructor');
+        })->with('roles')->first();
+
+
         if (!$instructor) {
             $this->command->error('No instructor found. Please run AdminSeeder first.');
             return;
@@ -75,6 +79,7 @@ class CourseSeeder extends Seeder
 
         foreach ($courses as $courseData) {
             Course::create([
+                'id' => (string) Str::uuid(),
                 'title' => $courseData['title'],
                 'code' => $courseData['code'],
                 'description' => $courseData['description'],
@@ -85,7 +90,7 @@ class CourseSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('Created ' . count($courses) . ' sample courses for testing!');
-        $this->command->info('Courses are now available for student enrollment.');
+        // $this->command->info('Created ' . count($courses) . ' sample courses for testing!');
+        // $this->command->info('Courses are now available for student enrollment.');
     }
 }

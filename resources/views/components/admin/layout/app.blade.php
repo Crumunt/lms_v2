@@ -93,11 +93,6 @@
             }
         }
 
-        /* Logo Container */
-        .logo-container {
-            /* Removed floating animation */
-        }
-
         /* Sidebar Items with Enhanced Effects */
         .sidebar-item {
             position: relative;

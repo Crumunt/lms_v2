@@ -40,14 +40,14 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        if ($redirect = $this->checkAdminAccess()) {
-            return $redirect;
-        }
+        // if ($redirect = $this->checkAdminAccess()) {
+        //     return $redirect;
+        // }
         // Get statistics
         $stats = [
-            'admin_count' => User::where('role', 'admin')->count(),
-            'student_count' => User::where('role', 'student')->count(),
-            'instructor_count' => User::where('role', 'instructor')->count(),
+            'admin_count' => User::role('admin')->count(),
+            'student_count' => User::role('student')->count(),
+            'instructor_count' => User::role('instructor')->count(),
             'total_courses' => Course::where('status', 'approved')->count(),
             'total_materials' => CourseContent::where('status', 'published')->count(),
         ];
@@ -83,11 +83,11 @@ class AdminController extends Controller
      */
     public function instructors()
     {
-        if ($redirect = $this->checkAdminAccess()) {
-            return $redirect;
-        }
+        // if ($redirect = $this->checkAdminAccess()) {
+        //     return $redirect;
+        // }
 
-        $instructors = User::where('role', 'instructor')
+        $instructors = User::role('instructor')
             ->withCount('taughtCourses')
             ->get();
 
@@ -173,11 +173,11 @@ class AdminController extends Controller
      */
     public function students()
     {
-        if ($redirect = $this->checkAdminAccess()) {
-            return $redirect;
-        }
+        // if ($redirect = $this->checkAdminAccess()) {
+        //     return $redirect;
+        // }
 
-        $students = User::where('role', 'student')
+        $students = User::role( 'student')
             ->withCount('enrollments')
             ->get();
 
@@ -263,9 +263,9 @@ class AdminController extends Controller
      */
     public function courses()
     {
-        if ($redirect = $this->checkAdminAccess()) {
-            return $redirect;
-        }
+        // if ($redirect = $this->checkAdminAccess()) {
+        //     return $redirect;
+        // }
 
         $courses = Course::with('instructor')
             ->withCount('enrollments')

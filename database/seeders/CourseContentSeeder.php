@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Course;
 use App\Models\CourseContent;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class CourseContentSeeder extends Seeder
 {
@@ -57,6 +58,7 @@ class CourseContentSeeder extends Seeder
 
         foreach ($contents as $contentData) {
             CourseContent::create([
+                'id' => (string) Str::uuid(),
                 'course_id' => $course->id,
                 'title' => $contentData['title'],
                 'description' => $contentData['description'],

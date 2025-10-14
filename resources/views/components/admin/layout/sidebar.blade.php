@@ -28,14 +28,14 @@
     <nav class="mt-6 px-3">
         <!-- Dashboard -->
         <a href="{{ route('admin.dashboard') }}" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ $activeItem === 'dashboard' ? 'active' : '' }}">
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.dashboard' ? 'active' : '' }}">
             <i class="fas fa-tachometer-alt sidebar-icon mr-3 text-lg"></i>
             <span>Dashboard</span>
         </a>
         
         <!-- Students -->
         <a href="{{ route('admin.students') }}" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ $activeItem === 'students' ? 'active' : '' }}">
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.students' ? 'active' : '' }}">
             <i class="fas fa-users sidebar-icon mr-3 text-lg"></i>
             <span>Students</span>
             @if($notifications['users'] > 0)
@@ -47,14 +47,14 @@
         
         <!-- Instructors -->
         <a href="{{ route('admin.instructors') }}" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ $activeItem === 'instructors' ? 'active' : '' }}">
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.instructors' ? 'active' : '' }}">
             <i class="fas fa-chalkboard-teacher sidebar-icon mr-3 text-lg"></i>
             <span>Instructors</span>
         </a>
         
         <!-- Courses -->
         <a href="{{ route('admin.courses') }}" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ $activeItem === 'courses' ? 'active' : '' }}">
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.courses' ? 'active' : '' }}">
             <i class="fas fa-book sidebar-icon mr-3 text-lg"></i>
             <span>Courses</span>
             @if($notifications['courses'] > 0)
@@ -66,14 +66,14 @@
         
         <!-- Reports -->
         <a href="#" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ $activeItem === 'reports' ? 'active' : '' }}">
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.reports' ? 'active' : '' }}">
             <i class="fas fa-chart-bar sidebar-icon mr-3 text-lg"></i>
             <span>Reports</span>
         </a>
         
         <!-- Settings -->
         <a href="#" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ $activeItem === 'settings' ? 'active' : '' }}">
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.settings' ? 'active' : '' }}">
             <i class="fas fa-cog sidebar-icon mr-3 text-lg"></i>
             <span>Settings</span>
         </a>

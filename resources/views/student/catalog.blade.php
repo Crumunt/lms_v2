@@ -1,18 +1,7 @@
-@props([
-    'user' => [
-        'name' => 'Francis',
-        'program' => 'BS Computer Science',
-        'initials' => 'JD'
-    ],
-    'courses' => []
-])
+@extends('layouts.student')
 
-<x-student.layout.app 
-    title="Course Catalog - CLSU LMS"
-    activeItem="catalog"
-    :user="$user"
-    :notifications="['courses' => 5, 'assignments' => 2]"
->
+@section('content')
+
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Course Catalog</h1>
@@ -37,6 +26,5 @@
             </div>
         @endforelse
     </div>
-</x-student.layout.app>
 
-
+@endsection

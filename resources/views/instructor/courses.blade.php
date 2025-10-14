@@ -1,18 +1,6 @@
-@props([
-    'user' => [
-        'name' => 'Dr. Lorenz',
-        'department' => 'Computer Science',
-        'initials' => 'JS'
-    ],
-    'allCourses' => []
-])
+@extends('layouts.instructor')
 
-<x-instructor.layout.app 
-    title="My Courses - CLSU Instructor Dashboard"
-    activeItem="courses"
-    :user="$user"
-    :notifications="['assignments' => 8, 'students' => 3]"
->
+@section('content')
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-800">My Courses</h1>
@@ -29,4 +17,4 @@
             <x-instructor.cards.course-card :course="$course" />
         @endforeach
     </div>
-</x-instructor.layout.app>
+@endsection

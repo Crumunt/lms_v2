@@ -1,18 +1,6 @@
-@props([
-    'user' => [
-        'name' => 'Francis',
-        'program' => 'BS Computer Science',
-        'initials' => 'JD'
-    ],
-    'enrolledCourses' => []
-])
+@extends('layouts.student')
 
-<x-student.layout.app 
-    title="My Courses - CLSU LMS"
-    activeItem="courses"
-    :user="$user"
-    :notifications="['courses' => 5, 'assignments' => 2]"
->
+@section('content')
     <!-- Page Header -->
     <div class="flex items-center justify-between mb-8">
         <div>
@@ -40,7 +28,7 @@
                         <i class="fas fa-chalkboard-teacher mr-1"></i>
                         {{ $course['instructor'] }}
                     </p>
-                    
+
                     <div class="flex items-center justify-between mt-4">
                         <div class="flex items-center space-x-4 text-xs text-gray-500">
                             <span>
@@ -49,11 +37,13 @@
                             </span>
                         </div>
                         <div class="space-x-2">
-                            <button class="btn-primary text-sm px-4 py-2" onclick="event.stopPropagation(); window.location.href='{{ route('student.course.show', $course['id']) }}'">
+                            <button class="btn-primary text-sm px-4 py-2"
+                                onclick="event.stopPropagation(); window.location.href='{{ route('student.course.show', $course['id']) }}'">
                                 <i class="fas fa-eye mr-1"></i>
                                 View Course
                             </button>
-                            <button class="btn-secondary text-sm px-4 py-2" onclick="event.stopPropagation(); unenrollFromCourse({{ $course['id'] }})">
+                            <button class="btn-secondary text-sm px-4 py-2"
+                                onclick="event.stopPropagation(); unenrollFromCourse({{ $course['id'] }})">
                                 <i class="fas fa-times mr-1"></i>
                                 Unenroll
                             </button>
@@ -80,54 +70,54 @@
     @endif
 
     <script>
-    function unenrollFromCourse(courseId) {
-        if (confirm('Are you sure you want to unenroll from this course?')) {
-            fetch(`/student/courses/${courseId}/unenroll`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    setTimeout(() => {
-                        window.location.href = '/student/catalog';
-                    }, 1000);
-                } else {
-                    showNotification(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to unenroll. Please try again.', 'error');
-            });
+        function unenrollFromCourse(courseId) {
+            if (confirm('Are you sure you want to unenroll from this course?')) {
+                fetch(`/student/courses/${courseId}/unenroll`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification(data.message, 'success');
+                            setTimeout(() => {
+                                window.location.href = '/student/catalog';
+                            }, 1000);
+                        } else {
+                            showNotification(data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Failed to unenroll. Please try again.', 'error');
+                    });
+            }
         }
-    }
 
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${
-            type === 'success' ? 'bg-green-500 text-white' : 
-            type === 'error' ? 'bg-red-500 text-white' : 
-            'bg-blue-500 text-white'
-        }`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        // Animate in
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${type === 'success' ? 'bg-green-500 text-white' :
+                    type === 'error' ? 'bg-red-500 text-white' :
+                        'bg-blue-500 text-white'
+                }`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Animate in
             setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 3000);
-    }
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
     </script>
-</x-student.layout.app>
+
+@endsection

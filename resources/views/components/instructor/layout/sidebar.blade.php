@@ -1,5 +1,4 @@
 @props([
-    'activeItem' => 'dashboard',
     'user' => [
         'name' => 'Dr. Lorenz',
         'department' => 'Computer Science',
@@ -23,14 +22,14 @@
     </div>
     
     <nav class="flex-1 px-3 py-6 space-y-2" aria-label="Main Navigation">
-        <a href="{{ route('instructor.dashboard') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ $activeItem === 'dashboard' ? 'active' : '' }}">
+        <a href="{{ route('instructor.dashboard') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.dashboard' ? 'active' : '' }}">
             <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
                 <i class="fas fa-tachometer-alt"></i>
             </div>
             <span class="ml-4 font-medium">Dashboard</span>
         </a>
         
-        <a href="{{ route('instructor.courses') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ $activeItem === 'courses' ? 'active' : '' }}">
+        <a href="{{ route('instructor.courses') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.courses' ? 'active' : '' }}">
             <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
                 <i class="fas fa-book-open"></i>
             </div>
@@ -38,7 +37,7 @@
             <span class="ml-auto notification-badge bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $notifications['assignments'] }}</span>
         </a>
         
-        <a href="{{ route('instructor.students') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ $activeItem === 'students' ? 'active' : '' }}">
+        <a href="{{ route('instructor.students') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.students' ? 'active' : '' }}">
             <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
                 <i class="fas fa-users"></i>
             </div>
@@ -46,7 +45,7 @@
             <span class="ml-auto notification-badge bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{{ $notifications['students'] }}</span>
         </a>
         
-        <a href="{{ route('instructor.resources') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ $activeItem === 'resources' ? 'active' : '' }}">
+        <a href="{{ route('instructor.resources') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.resources' ? 'active' : '' }}">
             <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
                 <i class="fas fa-folder"></i>
             </div>

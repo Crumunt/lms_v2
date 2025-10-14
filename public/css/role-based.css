@@ -1,0 +1,182 @@
+/* ==========================================================
+   CLSU Role-Based & Unmerged Styles
+   Extends: clsu-unified.css
+   Purpose: Contains unique styles from Admin, Instructor,
+            and Student themes not merged into the unified file.
+   ========================================================== */
+
+/* -------------------------
+   ROLE COLOR ACCENTS
+---------------------------- */
+:root {
+    --admin-accent: var(--clsu-gold);
+    --instructor-accent: var(--clsu-green);
+    --student-accent: var(--clsu-light-green);
+}
+
+/* Admin-specific highlights */
+.admin-theme .header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+    border-bottom: 2px solid var(--admin-accent);
+}
+
+.admin-theme .sidebar-item.active::before {
+    background: var(--admin-accent);
+}
+
+.admin-theme .btn-primary {
+    background: linear-gradient(135deg, var(--clsu-green), var(--admin-accent));
+}
+
+/* Instructor-specific highlights */
+.instructor-theme .header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(6, 132, 6, 0.05));
+    border-bottom: 2px solid var(--instructor-accent);
+}
+
+.instructor-theme .sidebar-item.active::before {
+    background: var(--instructor-accent);
+}
+
+.instructor-theme .card {
+    border-top: 3px solid var(--instructor-accent);
+}
+
+/* Student-specific highlights */
+.student-theme .header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(11, 165, 11, 0.05));
+    border-bottom: 2px solid var(--student-accent);
+}
+
+.student-theme .sidebar-item.active::before {
+    background: var(--student-accent);
+}
+
+.student-theme .card {
+    border-top: 3px solid var(--student-accent);
+}
+
+/* -------------------------
+   ANIMATED ELEMENTS UNIQUE TO ADMIN THEME
+---------------------------- */
+.sidebar-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.sidebar-item:hover::before {
+    left: 100%;
+}
+
+/* Notification badge animation */
+.notification-badge {
+    background: var(--admin-accent);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* -------------------------
+   FLOATING BUTTON VARIANTS
+---------------------------- */
+.fab.instructor {
+    background: linear-gradient(135deg, var(--instructor-accent), var(--clsu-green));
+    color: white;
+}
+
+.fab.student {
+    background: linear-gradient(135deg, var(--student-accent), var(--clsu-light-green));
+    color: white;
+}
+
+/* -------------------------
+   GLASS PANEL & CARD VARIANTS
+---------------------------- */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Statistic or metric cards (unique to instructor/student views) */
+.metric-card {
+    background: linear-gradient(135deg, #fff, #f9fafb);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--neutral-border);
+    transition: all var(--transition-fast);
+}
+
+.metric-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0, 99, 0, 0.12);
+}
+
+.metric-card .icon {
+    font-size: 2rem;
+    color: var(--clsu-green);
+}
+
+/* -------------------------
+   RESPONSIVE FIXES (Instructor/Student)
+---------------------------- */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header h1 {
+        font-size: 1.25rem;
+    }
+}
+
+/* -------------------------
+   TRANSITION UTILITIES
+---------------------------- */
+.fade-in {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn 0.6s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

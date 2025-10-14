@@ -1,18 +1,6 @@
-@props([
-    'user' => [
-        'name' => 'Admin User',
-        'role' => 'Administrator',
-        'initials' => 'AU'
-    ],
-    'instructor' => null
-])
+@extends('layouts.admin')
 
-<x-admin.layout.app 
-    title="Instructor Details - CLSU LMS"
-    activeItem="instructors"
-    :user="$user"
-    :notifications="['users' => 0, 'courses' => 0]"
->
+@section('content')
     <!-- Page Header -->
     <div class="mb-8">
         <div class="flex items-center justify-between">
@@ -38,12 +26,14 @@
         <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <div class="text-center">
-                    <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="text-white text-2xl font-bold">{{ substr($instructor->name, 0, 2) }}</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $instructor->name }}</h3>
                     <p class="text-gray-600 mb-4">{{ $instructor->email }}</p>
-                    <span class="badge {{ $instructor->status === 'approved' ? 'badge-success' : ($instructor->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
+                    <span
+                        class="badge {{ $instructor->status === 'approved' ? 'badge-success' : ($instructor->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
                         {{ ucfirst($instructor->status) }}
                     </span>
                 </div>
@@ -94,7 +84,8 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="badge {{ $course->status === 'approved' ? 'badge-success' : ($course->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
+                                        <span
+                                            class="badge {{ $course->status === 'approved' ? 'badge-success' : ($course->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
                                             {{ ucfirst($course->status) }}
                                         </span>
                                     </div>
@@ -112,4 +103,4 @@
             </div>
         </div>
     </div>
-</x-admin.layout.app>
+@endsection

@@ -1,14 +1,6 @@
-@props([
-    'courseData' => [],
-    'contents' => []
-])
+@extends('layouts.student')
 
-<x-student.layout.app 
-    :title="'Course: ' . $courseData['title'] . ' - CLSU LMS'"
-    activeItem="courses"
-    :user="$user"
-    :notifications="$notifications"
->
+@section('content')
     <!-- Course Header -->
     <div class="bg-gradient-to-r from-green-600 to-green-500 text-white rounded-2xl p-8 mb-8">
         <div class="flex items-center space-x-6">
@@ -25,7 +17,7 @@
                     </div>
                 @endif
             </div>
-            
+
         </div>
     </div>
 
@@ -34,20 +26,23 @@
         <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-24">
                 <h3 class="font-semibold text-gray-800 mb-4">Course Content</h3>
-                
-                
+
+
 
                 <!-- Course Navigation -->
                 <div class="space-y-2">
-                    <a href="#overview" class="course-nav-item active flex items-center px-4 py-3 rounded-xl transition-all duration-200 bg-green-50 text-green-700 border border-green-200">
+                    <a href="#overview"
+                        class="course-nav-item active flex items-center px-4 py-3 rounded-xl transition-all duration-200 bg-green-50 text-green-700 border border-green-200">
                         <i class="fas fa-info-circle mr-3"></i>
                         <span>Course Overview</span>
                     </a>
-                    <a href="#materials" class="course-nav-item flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800">
+                    <a href="#materials"
+                        class="course-nav-item flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800">
                         <i class="fas fa-book mr-3"></i>
                         <span>Course Materials</span>
                     </a>
-                    <a href="#modules" class="course-nav-item flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800">
+                    <a href="#modules"
+                        class="course-nav-item flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800">
                         <i class="fas fa-list mr-3"></i>
                         <span>Learning Modules</span>
                     </a>
@@ -76,7 +71,7 @@
             <div id="overview" class="course-section">
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">Course Overview</h3>
-                    
+
                     <!-- Course Description -->
                     <div class="mb-8">
                         <h4 class="font-semibold text-gray-700 mb-3">Description</h4>
@@ -135,7 +130,8 @@
                         <div class="bg-gray-50 rounded-xl p-6">
                             <h5 class="font-semibold text-gray-700 mb-4">Instructor</h5>
                             <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                <div
+                                    class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                                     {{ $courseData['instructor']['initials'] }}
                                 </div>
                                 <div>
@@ -153,7 +149,7 @@
             <div id="materials" class="course-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">Course Materials</h3>
-                    
+
                     <!-- Textbooks -->
                     <div class="mb-8">
                         <h4 class="font-semibold text-gray-700 mb-4">Required Textbooks</h4>
@@ -219,14 +215,16 @@
             <div id="modules" class="course-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">Learning Modules</h3>
-                    
+
                     <div class="space-y-6">
                         <!-- Module 1 -->
                         <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
                             <div class="bg-white px-6 py-4 border-b border-gray-200">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
-                                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
+                                        <div
+                                            class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                            1</div>
                                         <div>
                                             <h4 class="font-semibold text-gray-800">Introduction to Programming</h4>
                                             <p class="text-sm text-gray-600">Week 1-2</p>
@@ -247,7 +245,8 @@
                                     </div>
                                     <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
                                         <i class="fas fa-play-circle text-green-600"></i>
-                                        <span class="text-sm font-medium text-gray-800">Programming Languages Overview</span>
+                                        <span class="text-sm font-medium text-gray-800">Programming Languages
+                                            Overview</span>
                                         <span class="ml-auto text-xs text-gray-500">20 min</span>
                                     </div>
                                 </div>
@@ -259,7 +258,9 @@
                             <div class="bg-white px-6 py-4 border-b border-gray-200">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
-                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">2</div>
+                                        <div
+                                            class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                            2</div>
                                         <div>
                                             <h4 class="font-semibold text-gray-800">Control Structures</h4>
                                             <p class="text-sm text-gray-600">Week 5-6</p>
@@ -290,7 +291,7 @@
                 </div>
             </div>
 
-            
+
         </div>
     </div>
 
@@ -322,24 +323,24 @@
 
     <script>
         // Course navigation functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const navItems = document.querySelectorAll('.course-nav-item');
             const sections = document.querySelectorAll('.course-section');
-            
+
             navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
+                item.addEventListener('click', function (e) {
                     e.preventDefault();
                     const targetSection = this.getAttribute('href').substring(1);
-                    
+
                     // Update active nav item
                     navItems.forEach(nav => nav.classList.remove('active'));
                     this.classList.add('active');
-                    
+
                     // Show target section
                     sections.forEach(section => {
                         section.classList.add('hidden');
                     });
-                    
+
                     const targetElement = document.getElementById(targetSection);
                     if (targetElement) {
                         targetElement.classList.remove('hidden');
@@ -350,54 +351,53 @@
     </script>
 
     <script>
-    function unenrollFromCourse(courseId) {
-        if (confirm('Are you sure you want to unenroll from this course?')) {
-            fetch(`/student/courses/${courseId}/unenroll`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    setTimeout(() => {
-                        window.location.href = '/student/catalog';
-                    }, 1000);
-                } else {
-                    showNotification(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to unenroll. Please try again.', 'error');
-            });
+        function unenrollFromCourse(courseId) {
+            if (confirm('Are you sure you want to unenroll from this course?')) {
+                fetch(`/student/courses/${courseId}/unenroll`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification(data.message, 'success');
+                            setTimeout(() => {
+                                window.location.href = '/student/catalog';
+                            }, 1000);
+                        } else {
+                            showNotification(data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Failed to unenroll. Please try again.', 'error');
+                    });
+            }
         }
-    }
 
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${
-            type === 'success' ? 'bg-green-500 text-white' : 
-            type === 'error' ? 'bg-red-500 text-white' : 
-            'bg-blue-500 text-white'
-        }`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        // Animate in
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${type === 'success' ? 'bg-green-500 text-white' :
+                    type === 'error' ? 'bg-red-500 text-white' :
+                        'bg-blue-500 text-white'
+                }`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Animate in
             setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 3000);
-    }
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
     </script>
-</x-student.layout.app>
+@endsection

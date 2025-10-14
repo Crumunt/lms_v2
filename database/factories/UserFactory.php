@@ -7,6 +7,7 @@ use App\Models\UserDetails;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -27,7 +28,6 @@ class UserFactory extends Factory
     {
         return [
             'id' => (string) Str::uuid(),
-            'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
@@ -35,11 +35,33 @@ class UserFactory extends Factory
         ];
     }
 
-    public function configure() {
+    public function configure()
+    {
         return $this->afterCreating(function (User $user) {
             UserDetails::factory()->create([
                 'user_id' => $user->id
             ]);
+        });
+    }
+
+    public function admin()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('admin');
+        });
+    }
+
+    public function instructor()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('instructor');
+        });
+    }
+
+    public function student()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('student');
         });
     }
 
@@ -48,7 +70,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

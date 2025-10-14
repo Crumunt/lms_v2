@@ -1,17 +1,6 @@
-@props([
-    'user' => [
-        'name' => 'Dr. Lorenz',
-        'department' => 'Computer Science',
-        'initials' => 'JS'
-    ]
-])
+@extends('layouts.instructor')
 
-<x-instructor.layout.app 
-    title="Students - CLSU Instructor Dashboard"
-    activeItem="students"
-    :user="$user"
-    :notifications="['assignments' => 8, 'students' => 3]"
->
+@section('content')
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-800">Students</h1>
@@ -29,9 +18,12 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status
+                        </th>
                         <th class="px-4 py-3"></th>
                     </tr>
                 </thead>
@@ -42,10 +34,12 @@
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student['email'] }}</td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student['course'] }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="text-xs px-2 py-1 rounded-full {{ strtolower($student['status']) === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ $student['status'] }}</span>
+                                <span
+                                    class="text-xs px-2 py-1 rounded-full {{ strtolower($student['status']) === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ $student['status'] }}</span>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-right">
-                                <a href="{{ route('instructor.student.show', $student['id']) }}" class="text-purple-600 hover:text-purple-800 text-sm">View</a>
+                                <a href="{{ route('instructor.student.show', $student['id']) }}"
+                                    class="text-purple-600 hover:text-purple-800 text-sm">View</a>
                             </td>
                         </tr>
                     @endforeach
@@ -58,4 +52,4 @@
             </table>
         </div>
     </div>
-</x-instructor.layout.app>
+@endsection

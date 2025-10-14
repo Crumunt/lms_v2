@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\UserStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class UserDetails extends Model
 {
     //
+    use HasFactory;
+
     protected $casts = [
         'status' => UserStatus::class
     ];

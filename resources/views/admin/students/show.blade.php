@@ -1,18 +1,7 @@
-@props([
-    'user' => [
-        'name' => 'Admin User',
-        'role' => 'Administrator',
-        'initials' => 'AU'
-    ],
-    'student' => null
-])
+@extends('layouts.admin')
 
-<x-admin.layout.app 
-    title="Student Details - CLSU LMS"
-    activeItem="students"
-    :user="$user"
-    :notifications="['users' => 0, 'courses' => 0]"
->
+@section('content')
+
     <!-- Page Header -->
     <div class="mb-8">
         <div class="flex items-center justify-between">
@@ -38,12 +27,14 @@
         <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <div class="text-center">
-                    <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="text-white text-2xl font-bold">{{ substr($student->name, 0, 2) }}</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $student->name }}</h3>
                     <p class="text-gray-600 mb-4">{{ $student->email }}</p>
-                    <span class="badge {{ $student->status === 'approved' ? 'badge-success' : ($student->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
+                    <span
+                        class="badge {{ $student->status === 'approved' ? 'badge-success' : ($student->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
                         {{ ucfirst($student->status) }}
                     </span>
                 </div>
@@ -94,7 +85,8 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="badge {{ $course->pivot->status === 'active' ? 'badge-success' : 'badge-warning' }}">
+                                        <span
+                                            class="badge {{ $course->pivot->status === 'active' ? 'badge-success' : 'badge-warning' }}">
                                             {{ ucfirst($course->pivot->status) }}
                                         </span>
                                     </div>
@@ -112,4 +104,4 @@
             </div>
         </div>
     </div>
-</x-admin.layout.app>
+@endsection

@@ -1,18 +1,7 @@
-@props([
-    'user' => [
-        'name' => 'Admin User',
-        'role' => 'Administrator',
-        'initials' => 'AU'
-    ],
-    'students' => []
-])
+@extends('layouts.admin')
 
-<x-admin.layout.app 
-    title="Student Management - CLSU LMS"
-    activeItem="students"
-    :user="$user"
-    :notifications="['users' => 0, 'courses' => 0]"
->
+@section('content')
+    
     <!-- Page Header -->
     <div class="mb-8">
         <div class="flex items-center justify-between">
@@ -144,6 +133,7 @@
         @method('DELETE')
     </form>
 
+    @stack('scripts')
     <script>
         function deleteStudent(studentId) {
             if (confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
@@ -153,4 +143,4 @@
             }
         }
     </script>
-</x-admin.layout.app>
+@endsection

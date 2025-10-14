@@ -1,17 +1,6 @@
-@props([
-    'user' => [
-        'name' => 'Dr. Lorenz',
-        'department' => 'Computer Science',
-        'initials' => 'JS'
-    ]
-])
+@extends('layouts.instructor')
 
-<x-instructor.layout.app 
-    title="Assignments - CLSU Instructor Dashboard"
-    activeItem="assignments"
-    :user="$user"
-    :notifications="['assignments' => 8, 'students' => 3]"
->
+@section('content')
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-800">Assignments</h1>
@@ -30,4 +19,5 @@
             <p class="text-gray-500">This page will show all your assignments and submissions</p>
         </div>
     </div>
-</x-instructor.layout.app>
+
+@endsection

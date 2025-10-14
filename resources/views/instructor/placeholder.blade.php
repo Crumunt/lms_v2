@@ -1,15 +1,6 @@
-@props([
-    'title' => 'Page',
-    'icon' => 'fas fa-cog',
-    'description' => 'This page is under development'
-])
+@extends('layouts.instructor')
+@section('content')
 
-<x-instructor.layout.app 
-    :title="$title . ' - CLSU Instructor Dashboard'"
-    activeItem="{{ strtolower($title) }}"
-    :user="['name' => 'Dr. Lorenz', 'department' => 'Computer Science', 'initials' => 'JS']"
-    :notifications="['assignments' => 8, 'students' => 3]"
->
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-800">{{ $title }}</h1>
@@ -24,4 +15,6 @@
             <p class="text-gray-500">This page is under development and will be available soon</p>
         </div>
     </div>
-</x-instructor.layout.app>
+
+
+@endsection
