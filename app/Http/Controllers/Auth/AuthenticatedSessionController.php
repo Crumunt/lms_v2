@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-        
+
 
         return $this->redirectBasedOnRole();
     }
@@ -37,12 +37,14 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        $role = $user->getRoleNames()->first();
+
+        // GET USER ROLE
+        $role = $user->roles->first()->name;
 
         return match ($role) {
             'admin' => redirect()->route('admin.dashboard'),
             'instructor' => redirect()->route('dashboard'),
-            'student' => redirect()->route('student.dsahboard'),
+            'student' => redirect()->route('student.dashboard'),
             default => redirect()->route('login')->with('error', 'Invalid user role.')
         };
     }

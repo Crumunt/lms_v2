@@ -1,8 +1,8 @@
 @extends('layouts.base')
 
-@stack('styles')
+@push('styles')
 <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
-
+@endpush
 
 @section('body')
 
@@ -28,7 +28,7 @@
     <button class="fab" onclick="scrollToTop()">
         <i class="fas fa-arrow-up"></i>
     </button>
-    @stack('scripts')
+    @push('scripts')
     <script>
         // Mobile sidebar toggle
         function toggleSidebar() {
@@ -234,4 +234,5 @@
 
         console.log('CLSU Instructor Dashboard loaded successfully! 👨‍🏫');
     </script>
+    @endpush
 @endsection

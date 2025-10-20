@@ -1,8 +1,8 @@
 @extends('layouts.base')
 
-@stack('styles')
+@push('styles')
 <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-
+@endpush
 
 @section('body')
     <!-- Layout Container -->
@@ -30,7 +30,7 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    @stack('scripts')
+    @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -147,4 +147,5 @@
 
         console.log('CLSU Admin Dashboard loaded successfully! 👨‍💼');
     </script>
+    @endpush
 @endsection

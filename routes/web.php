@@ -8,9 +8,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::prefix('student')->name('student.')->group(function () {
+    Route::middleware('role:student')->prefix('student')->name('student.')->group(function () {
         Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
         Route::get('/courses', [StudentController::class, 'courses'])->name('courses');
         Route::get('/catalog', [StudentController::class, 'catalog'])->name('catalog');
@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
         })->name('resources');
     });
 
-    Route::prefix('instructor')->name('instructor.')->group(function () {
+    Route::middleware('role:instructor')->prefix('instructor')->name('instructor.')->group(function () {
         Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
         Route::get('/courses', [InstructorController::class, 'courses'])->name('courses');
         Route::get('/courses/{id}', [InstructorController::class, 'showCourse'])->name('course.show');
@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/settings', [InstructorController::class, 'settings'])->name('settings');
     });
 
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
         // Instructor Management
