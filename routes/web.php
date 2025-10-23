@@ -22,8 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware('role:student')->prefix('student')->name('student.')->group(function () {
-        Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
-        Route::get('/courses', [StudentController::class, 'courses'])->name('courses');
+        Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
+        Route::get('/courses', [StudentController::class, 'courses1'])->name('courses');
         Route::get('/catalog', [StudentController::class, 'catalog'])->name('catalog');
         Route::get('/courses/{id}', [StudentController::class, 'showCourse'])->name('course.show');
         Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'enroll'])->name('course.enroll');

@@ -36,11 +36,9 @@ class EnrollmentSeeder extends Seeder
 
         // Create sample enrollment
         Enrollment::create([
-            'id' => (string) Str::uuid(),
             'student_id' => $student->id,
             'course_id' => $course->id,
-            'enrolled_at' => now()->subDays(10),
-            'status' => 'active',
+            'enrolled_at' => now()->subDays(10)
         ]);
 
         // Update course enrollment count

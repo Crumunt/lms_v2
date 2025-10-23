@@ -50,35 +50,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function details()
+    public function detail()
     {
         return $this->hasOne(UserDetails::class);
     }
 
-    /**
-     * Get the courses taught by the instructor.
-     */
-    public function taughtCourses()
-    {
-        return $this->hasMany(Course::class, 'instructor_id');
-    }
-
-    /**
-     * Get the courses enrolled by the student.
-     */
-    public function enrolledCourses()
-    {
-        return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id')
-            ->withPivot('enrolled_at', 'status')
-            ->withTimestamps();
-    }
-
-    /**
-     * Get the enrollments for the user.
-     */
-    public function enrollments()
-    {
-        return $this->hasMany(Enrollment::class, 'student_id');
+    public function courses() {
+        return $this->belongsToMany(Course::class, 'enrollments', 'student_id','course_id')->withTimestamps();
     }
 
     /**
@@ -87,29 +65,5 @@ class User extends Authenticatable
     public function scopeApproved($query)
     {
         return $query->where('status', 'approved');
-    }
-
-    /**
-     * Check if user is admin.
-     */
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
-
-    /**
-     * Check if user is instructor.
-     */
-    public function isInstructor()
-    {
-        return $this->role === 'instructor';
-    }
-
-    /**
-     * Check if user is student.
-     */
-    public function isStudent()
-    {
-        return $this->role === 'student';
     }
 }

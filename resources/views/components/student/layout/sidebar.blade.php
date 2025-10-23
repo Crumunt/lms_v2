@@ -1,11 +1,5 @@
 @props([
-    'user' => [
-        'name' => 'Francis',
-        'program' => 'BS Computer Science',
-        'initials' => 'JD',
-        'avatar' => null
-    ],
-    'activeItem' => 'dashboard',
+    'user',
     'notifications' => [
         'courses' => 5,
         'assignments' => 2
@@ -19,7 +13,7 @@
             <i class="fas fa-university text-4xl text-white"></i>
         </div>
         <div class="text-center">
-    <h1 class="text-xl font-bold tracking-wide">CLSU</h1>
+    <h1 class="text-xl font-bold tracking-wide">{{ config('app.name') }}</h1>
             <p class="text-xs opacity-80 mt-1">L
            earning Management System</p>
         </div>
@@ -27,8 +21,7 @@
     
     <nav class="flex-1 px-3 py-6 space-y-2" aria-label="Main Navigation">
         <a href="{{ route('student.dashboard') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'student.dashboard' ? 'active' : '' }}">
-        <div clas
-        s       ="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
+        <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
                 <i class="fas fa-home"></i>
             </div>
             <span class="ml-4 font-medium">Dashboard</span>
@@ -68,8 +61,7 @@
                 {{ $user['initials'] }}
             </div>
             <div class="ml-3 flex-1">
-                <p class="text-sm font-semibold">{{ $user['name'] }}</p>
-                <p class="text-xs opacity-70">{{ $user['program'] }}</p>
+                <p class="text-sm font-semibold">{{ $user->detail?->full_name }}</p>
             </div>
         </div>
     </div>

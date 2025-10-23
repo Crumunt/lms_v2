@@ -53,18 +53,23 @@
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         <div class="p-6">
             <div class="space-y-4">
-                @foreach($activities as $activity)
-                    <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-gray-50 transition">
-                        <div class="w-10 h-10 {{ $activity['iconBg'] }} rounded-full flex items-center justify-center">
-                            <i class="{{ $activity['icon'] }} {{ $activity['iconColor'] }}"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800">{{ $activity['title'] }}</p>
-                            <p class="text-xs text-gray-500">{{ $activity['description'] }}</p>
-                            <p class="text-xs text-gray-400 mt-1">{{ $activity['time'] }}</p>
-                        </div>
+               @forelse($activities as $activity)
+                <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-gray-50 transition">
+                    <div class="w-10 h-10 {{ $activity['iconBg'] }} rounded-full flex items-center justify-center">
+                        <i class="{{ $activity['icon'] }} {{ $activity['iconColor'] }}"></i>
                     </div>
-                @endforeach
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-800">{{ $activity['title'] }}</p>
+                        <p class="text-xs text-gray-500">{{ $activity['description'] }}</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ $activity['time'] }}</p>
+                    </div>
+                </div>
+            @empty
+                <div class="p-4 text-sm text-gray-500 text-center">
+                    No recent activities to show.
+                </div>
+            @endforelse
+
             </div>
         </div>
     </div>

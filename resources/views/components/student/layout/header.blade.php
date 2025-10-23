@@ -15,7 +15,7 @@
                 <h1 class="text-2xl font-bold bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
                     Student Dashboard
                 </h1>
-                <p class="text-sm text-gray-500 mt-1">Welcome back, {{ $user['name'] }}!</p>
+                <p class="text-sm text-gray-500 mt-1">Welcome back, {{ $user->detail?->full_name }}!</p>
             </div>
         </div>
         
@@ -49,9 +49,6 @@
                     <i class="far fa-clock mr-2 text-green-600"></i>
                     <span id="current-time">{{ $currentTime ?? 'Loading...' }}</span>
                 </span>
-            </div>
-            <div class="text-sm text-gray-600">
-                <span class="font-medium">Semester:</span> {{ $semester }}
             </div>
         </div>
     </div>

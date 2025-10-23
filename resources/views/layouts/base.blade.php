@@ -18,8 +18,16 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- livewire -->
+    @livewireStyles
+
     <!-- STYLES -->
     @stack('styles')
+
+
+    <!-- livewire -->
+    @livewireScripts
+
 </head>
 
 <body class="font-sans antialiased">

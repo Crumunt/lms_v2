@@ -65,7 +65,7 @@
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         <div class="p-6">
             <div class="space-y-4">
-                @foreach($events as $event)
+                @forelse($events as $event)
                     <div class="flex items-center space-x-4 p-4 rounded-xl {{ $event['bgLight'] }} border {{ $event['borderColor'] }}">
                         <div class="w-12 h-12 {{ $event['bgColor'] }} rounded-full flex items-center justify-center text-white font-bold">
                             {{ $event['day'] }}
@@ -79,7 +79,11 @@
                             <span class="inline-block {{ $event['badgeColor'] }} text-xs px-2 py-1 rounded-full">{{ $event['badge'] }}</span>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="p-4 text-sm text-gray-500 text-center">
+                        No recent events to show.
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>

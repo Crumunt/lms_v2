@@ -36,6 +36,11 @@ class Course extends Model
         return $this->belongsTo(User::class, 'instructor_id');
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'enrollments', 'course_id', 'student_id')->withTimestamps();
+    }
+
     /**
      * Get the course contents for the course.
      */

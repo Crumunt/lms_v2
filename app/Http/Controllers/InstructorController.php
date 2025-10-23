@@ -95,7 +95,7 @@ class InstructorController extends Controller
 
 
         $user = [
-            'name' => $userData->details?->full_name,
+            'name' => $userData->detail?->full_name,
             'department' => 'Computer Science',
             'initials' => 'JS'
         ];

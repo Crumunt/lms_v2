@@ -80,64 +80,23 @@
                         </p>
                     </div>
 
-                    <!-- Learning Objectives -->
-                    <div class="mb-8">
-                        <h4 class="font-semibold text-gray-700 mb-4">Learning Objectives</h4>
-                        <ul class="space-y-3">
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                <span class="text-gray-600">Understand fundamental programming concepts and syntax</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                <span class="text-gray-600">Develop problem-solving skills using algorithms</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                <span class="text-gray-600">Write, test, and debug computer programs</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                <span class="text-gray-600">Apply object-oriented programming principles</span>
-                            </li>
-                        </ul>
-                    </div>
-
                     <!-- Course Information -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 rounded-xl p-6">
+                        <div class="col-span-full bg-gray-50 rounded-xl p-6">
                             <h5 class="font-semibold text-gray-700 mb-4">Course Details</h5>
                             <div class="space-y-3 text-sm">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Credits:</span>
-                                    <span class="font-medium">3 Units</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Duration:</span>
-                                    <span class="font-medium">16 Weeks</span>
-                                </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Level:</span>
                                     <span class="font-medium">Beginner</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600">Language:</span>
-                                    <span class="font-medium">English</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <h5 class="font-semibold text-gray-700 mb-4">Instructor</h5>
-                            <div class="flex items-center space-x-4">
-                                <div
-                                    class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    {{ $courseData['instructor']['initials'] }}
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">{{ $courseData['instructor']['name'] }}</p>
-                                    <p class="text-sm text-gray-600">{{ $courseData['instructor']['department'] }}</p>
-                                    <p class="text-xs text-gray-500">{{ $courseData['instructor']['email'] }}</p>
+                                    <h5 class="text-gray-700">Instructor:</h5>
+                                    <div class="text-end">
+                                        <div>
+                                            <p class="font-medium text-gray-800">{{ $courseData['instructor']['name'] }}</p>
+                                            <p class="text-xs text-gray-500">{{ $courseData['instructor']['email'] }}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -295,109 +254,113 @@
         </div>
     </div>
 
-    <style>
-        .course-nav-item {
-            transition: all 0.3s ease;
-        }
+    @push('styles')
+        <style>
+            .course-nav-item {
+                transition: all 0.3s ease;
+            }
 
-        .course-nav-item:hover {
-            background: rgba(6, 132, 6, 0.1);
-            color: var(--clsu-green);
-            transform: translateX(4px);
-        }
+            .course-nav-item:hover {
+                background: rgba(6, 132, 6, 0.1);
+                color: var(--clsu-green);
+                transform: translateX(4px);
+            }
 
-        .course-nav-item.active {
-            background: linear-gradient(135deg, var(--clsu-green), var(--clsu-light-green));
-            color: white;
-            box-shadow: 0 4px 12px rgba(6, 132, 6, 0.3);
-        }
+            .course-nav-item.active {
+                background: linear-gradient(135deg, var(--clsu-green), var(--clsu-light-green));
+                color: white;
+                box-shadow: 0 4px 12px rgba(6, 132, 6, 0.3);
+            }
 
-        .course-section {
-            display: block;
-        }
+            .course-section {
+                display: block;
+            }
 
-        .course-section.hidden {
-            display: none;
-        }
-    </style>
+            .course-section.hidden {
+                display: none;
+            }
+        </style>
+    @endpush
 
-    <script>
-        // Course navigation functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const navItems = document.querySelectorAll('.course-nav-item');
-            const sections = document.querySelectorAll('.course-section');
+    @push('scripts')
+        <script>
+            // Course navigation functionality
+            document.addEventListener('DOMContentLoaded', function () {
+                const navItems = document.querySelectorAll('.course-nav-item');
+                const sections = document.querySelectorAll('.course-section');
 
-            navItems.forEach(item => {
-                item.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetSection = this.getAttribute('href').substring(1);
+                navItems.forEach(item => {
+                    item.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const targetSection = this.getAttribute('href').substring(1);
 
-                    // Update active nav item
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    this.classList.add('active');
+                        // Update active nav item
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        this.classList.add('active');
 
-                    // Show target section
-                    sections.forEach(section => {
-                        section.classList.add('hidden');
+                        // Show target section
+                        sections.forEach(section => {
+                            section.classList.add('hidden');
+                        });
+
+                        const targetElement = document.getElementById(targetSection);
+                        if (targetElement) {
+                            targetElement.classList.remove('hidden');
+                        }
                     });
-
-                    const targetElement = document.getElementById(targetSection);
-                    if (targetElement) {
-                        targetElement.classList.remove('hidden');
-                    }
                 });
             });
-        });
-    </script>
+        </script>
 
-    <script>
-        function unenrollFromCourse(courseId) {
-            if (confirm('Are you sure you want to unenroll from this course?')) {
-                fetch(`/student/courses/${courseId}/unenroll`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showNotification(data.message, 'success');
-                            setTimeout(() => {
-                                window.location.href = '/student/catalog';
-                            }, 1000);
-                        } else {
-                            showNotification(data.message, 'error');
+        <script>
+            function unenrollFromCourse(courseId) {
+                if (confirm('Are you sure you want to unenroll from this course?')) {
+                    fetch(`/student/courses/${courseId}/unenroll`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showNotification('Failed to unenroll. Please try again.', 'error');
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification(data.message, 'success');
+                                setTimeout(() => {
+                                    window.location.href = '/student/catalog';
+                                }, 1000);
+                            } else {
+                                showNotification(data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showNotification('Failed to unenroll. Please try again.', 'error');
+                        });
+                }
             }
-        }
 
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${type === 'success' ? 'bg-green-500 text-white' :
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${type === 'success' ? 'bg-green-500 text-white' :
                     type === 'error' ? 'bg-red-500 text-white' :
                         'bg-blue-500 text-white'
-                }`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
+                    }`;
+                notification.textContent = message;
+                document.body.appendChild(notification);
 
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
+                // Animate in
                 setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
-        }
-    </script>
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 3000);
+            }
+        </script>
+    @endpush
 @endsection
