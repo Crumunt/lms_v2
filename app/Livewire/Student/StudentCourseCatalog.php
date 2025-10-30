@@ -11,6 +11,7 @@ use Livewire\Component;
 class StudentCourseCatalog extends Component
 {
     public $user;
+    public $isEnroll;
     protected $enrollmentService;
 
     public function boot(EnrollmentService $enrollmentService)
@@ -19,16 +20,21 @@ class StudentCourseCatalog extends Component
 
     }
 
-    public function mount()
+    public function mount($isEnroll = true)
     {
         $this->user = Auth::user();
+        $this->isEnroll = $isEnroll;
     }
 
     private function fetchAvailableCourses()
     {
-        $enrolledCourses = $this->user->courses()->pluck('courses.id');
-
-        $availableCourses = Course::whereNotIn('id', $enrolledCourses)->with('instructor')->get();
+        
+        if ($this->isEnroll) {
+            $enrolledCourses = $this->user->courses()->pluck('id');
+            $availableCourses = Course::whereNotIn('id', $enrolledCourses)->with('instructor')->get();
+        }else {
+            $availableCourses = $this->user->courses()->with('instructor')->get();
+        }
 
         return $availableCourses;
     }
@@ -47,8 +53,21 @@ class StudentCourseCatalog extends Component
 
     }
 
+    public function cancelEnrollment(string $courseId)
+    {
+        $course = Course::findOrFail($courseId);
+
+        $success = $this->enrollmentService->cancel($this->user, $course);
+
+        if ($success) {
+            session()->flash('message', 'Successfully cancelled enrollment in Course!.');
+        } else {
+            session()->flash('message', 'Something went wrong!.');
+        }
+    }
+
     public function render()
     {
-        return view('livewire.student.student-course-catalog', ['courses' => $this->fetchAvailableCourses()]);
+        return view('livewire.student.student-course-catalog', ['courses' => $this->fetchAvailableCourses(), 'isEnroll' => $this->isEnroll]);
     }
 }

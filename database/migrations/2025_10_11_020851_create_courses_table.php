@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignUuid('instructor_id')->constrained('users')->onDelete('cascade');
             $table->string('status')->default('pending');
             $table->string('difficulty')->default('beginner');
-            $table->integer('enrollment_count')->default(0);
+            $table->integer('enrollment_count')->nullable()->default(0);
             $table->timestamps();
         });
     }

@@ -28,11 +28,11 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach(($students ?? []) as $student)
+                    @foreach($students as $student)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ $student['name'] }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student['email'] }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student['course'] }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ $student->detail?->full_name }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student->email }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student->course?->title }}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span
                                     class="text-xs px-2 py-1 rounded-full {{ strtolower($student['status']) === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ $student['status'] }}</span>

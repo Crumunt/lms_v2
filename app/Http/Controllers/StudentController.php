@@ -139,16 +139,8 @@ class StudentController extends Controller
         // TO BE ADDED
         $notifications = ['courses' => 5, 'assignments' => 2];
 
-        // Get course from database
-        $course = Course::with('instructor')->find($id);
-
-        if (!$course) {
-            abort(404);
-        }
-
         // GET ENROLLED COURSE
         $enrolledCourse = $user->courses()->with('instructor')->find($id);
-
         // CHECK IF IT COURSE ENROLLMENT EXISTS
         if (!$enrolledCourse) {
             return redirect()->route('student.catalog')->with('error', 'You are not enrolled in this course.');

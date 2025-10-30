@@ -3,7 +3,6 @@
     'iconBg' => 'bg-gradient-to-br from-blue-400 to-blue-600',
     'value' => '0',
     'label' => 'Stat Label',
-    'progress' => 0,
     'trend' => 'up', // up, down, neutral
     'trendValue' => '0%',
     'description' => ''

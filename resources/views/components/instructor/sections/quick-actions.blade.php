@@ -4,7 +4,7 @@
             'icon' => 'fas fa-plus',
             'color' => 'blue',
             'label' => 'Create Course',
-            'route' => 'instructor.course.create'
+            'route' => 'instructor.courses.create'
         ],
         [
             'icon' => 'fas fa-tasks',

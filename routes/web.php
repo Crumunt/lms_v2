@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CourseContentController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\ProfileController;
@@ -51,13 +52,14 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:instructor')->prefix('instructor')->name('instructor.')->group(function () {
-        Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
-        Route::get('/courses', [InstructorController::class, 'courses'])->name('courses');
-        Route::get('/courses/{id}', [InstructorController::class, 'showCourse'])->name('course.show');
-        Route::get('/courses/{id}/edit', [InstructorController::class, 'editCourse'])->name('course.edit');
-        Route::put('/courses/{id}', [InstructorController::class, 'updateCourse'])->name('course.update');
-        Route::get('/course/create', [InstructorController::class, 'createCourse'])->name('course.create');
-        Route::post('/course', [InstructorController::class, 'storeCourse'])->name('course.store');
+        Route::get('/dashboard', [InstructorController::class, 'index'])->name('dashboard');
+        Route::resource('courses', CourseController::class);
+        // Route::get('/courses', [InstructorController::class, 'courses'])->name('courses');
+        // Route::get('/courses/{id}', [InstructorController::class, 'showCourse'])->name('course.show');
+        // Route::get('/courses/{id}/edit', [InstructorController::class, 'editCourse'])->name('course.edit');
+        // Route::put('/courses/{id}', [InstructorController::class, 'updateCourse'])->name('course.update');
+        // Route::get('/course/create', [InstructorController::class, 'createCourse'])->name('course.create');
+        // Route::post('/course', [InstructorController::class, 'store'])->name('course.store');
         Route::post('/courses/{id}/contents', [CourseContentController::class, 'store'])->name('course.content.store');
         Route::put('/courses/{id}/contents/{contentId}', [CourseContentController::class, 'update'])->name('course.content.update');
         Route::delete('/courses/{id}/contents/{contentId}', [CourseContentController::class, 'destroy'])->name('course.content.delete');

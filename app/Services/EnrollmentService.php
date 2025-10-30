@@ -14,24 +14,35 @@ class EnrollmentService
     public function enroll(User $user, Course $course)
     {
 
-        if ($user->courses()->where('course_id', $course->id)->exists()) {
+        if ($this->isUserEnrolled($user, $course)) {
             return false; // Already enrolled
         }
 
         // logic for enrolling user
-        $user->courses()->attach($course->id);
+        try {
+            $user->courses()->attach($course->id);
 
-        return true;
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+
     }
 
-    public function unenroll(User $user, string $courseId)
+    public function cancel(User $user, Course $course)
     {
-        $user->courses()->detach($courseId);
+        if (!$this->isUserEnrolled($user, $course)) {
+            return false; // isn't enrolled
+        }
+
+        $detach = $user->courses()->detach($course->id);
+
+        return $detach > 0;
     }
 
     public function isUserEnrolled(User $user, Course $course)
     {
-        return $user->courses()->where('course_id', $course->id)->exists();
+        return $user->courses->contains($course);
     }
 
 }

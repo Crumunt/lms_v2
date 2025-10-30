@@ -13,23 +13,28 @@
     ]
 ])
 
-<div class="course-card" onclick="window.location.href='{{ route('instructor.course.show', $course['id']) }}'">
+<div class="course-card">
     <div class="course-image flex items-center justify-center">
         <i class="{{ $course['icon'] }} text-6xl text-white opacity-80"></i>
         <div class="course-badge">{{ $course['code'] }}</div>
         <div class="absolute top-4 left-4">
-            @if($course['status'] === 'active')
-                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Active</span>
+            @if($course['status'] === 'approved')
+                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Approved</span>
             @elseif($course['status'] === 'draft')
                 <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Draft</span>
+            @elseif($course['status'] === 'pending')
+                <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Pending</span>
             @else
                 <span class="bg-gray-500 text-white text-xs px-2 py-1 rounded-full">Archived</span>
             @endif
         </div>
+
     </div>
     <div class="course-content">
         <h3 class="text-lg font-bold text-gray-800 mb-2">{{ $course['title'] }}</h3>
-        <p class="text-gray-600 text-sm mb-4">{{ $course['description'] }}</p>
+        <div class="prose text-gray-600 mb-4">
+            {!! $course['description'] !!}
+        </div>
         
         <!-- Course Stats -->
         <div class="grid grid-cols-2 gap-4 mb-4">
@@ -43,28 +48,15 @@
             </div>
         </div>
         
-        
-        
-        <!-- Next Class -->
-        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
-            <div class="flex items-center">
-                <i class="fas fa-clock text-blue-600 mr-2"></i>
-                <div>
-                    <div class="text-sm font-medium text-blue-800">Next Class</div>
-                    <div class="text-xs text-blue-600">{{ $course['nextClass'] ?? 'Tomorrow, 9:00 AM' }}</div>
-                </div>
-            </div>
-        </div>
-        
         <!-- Action Buttons -->
         <div class="flex space-x-2">
-            <button class="flex-1 btn-primary text-sm px-3 py-2" onclick="event.stopPropagation(); window.location.href='{{ route('instructor.course.show', $course['id']) }}'">
+            <a href="{{ route('instructor.courses.show', $course['id']) }}" class="flex-1 btn-primary text-sm px-3 py-2">
                 <i class="fas fa-eye mr-1"></i>
                 Manage
-            </button>
-            <button class="btn-secondary text-sm px-3 py-2" onclick="event.stopPropagation(); window.location.href='{{ route('instructor.course.edit', $course['id']) }}'">
+            </a>
+            <a href="{{ route('instructor.courses.edit', $course['id']) }}" class="btn-secondary text-sm px-3 py-2">
                 <i class="fas fa-edit"></i>
-            </button>
+            </a>
         </div>
     </div>
 </div>

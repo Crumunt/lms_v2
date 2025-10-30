@@ -7,6 +7,8 @@ use App\Models\Course;
 use App\Models\CourseContent;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class InstructorController extends Controller
 {
@@ -85,30 +87,38 @@ class InstructorController extends Controller
         ]
     ];
 
-    public function dashboard()
+    public function index()
     {
+        $user = Auth::user();
+        $instructorId = $user->id; // or instructor id
 
-        $userId = Auth::id();
-        $userData = User::with('details')->find($userId);
+        $assignments = [];
 
-        abort_unless(Auth::id() === $userId, 403);
+        $latestEnrollments = User::whereHas('courses', function ($q) use ($instructorId) {
+            $q->where('instructor_id', $instructorId);
+        })
+            ->with([
+                'courses' => function ($q) use ($instructorId) {
+                    $q->where('instructor_id', $instructorId)
+                        ->orderByPivot('created_at', 'desc') // latest enrollments
+                        ->withPivot('created_at');
+                }
+            ])
+            ->take(5)
+            ->get();
 
+        $activeCourses = $user->taughtCourses()->approved()->count();
 
-        $user = [
-            'name' => $userData->detail?->full_name,
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
+        $totalStudents = User::whereHas('courses', function ($q) use ($instructorId) {
+            $q->where('instructor_id', $instructorId);
+        })->count();
 
         $stats = [
             [
                 'icon' => 'fas fa-book-open',
                 'iconBg' => 'bg-gradient-to-br from-blue-400 to-blue-600',
-                'value' => '6',
+                'value' => $activeCourses,
                 'label' => 'Active Courses',
-                'progress' => 85,
                 'trend' => 'up',
                 'trendValue' => '+2',
                 'description' => 'This semester'
@@ -116,9 +126,8 @@ class InstructorController extends Controller
             [
                 'icon' => 'fas fa-users',
                 'iconBg' => 'bg-gradient-to-br from-green-400 to-green-600',
-                'value' => '247',
+                'value' => $totalStudents,
                 'label' => 'Total Students',
-                'progress' => 92,
                 'trend' => 'up',
                 'trendValue' => '+15',
                 'description' => 'Across all courses'
@@ -128,7 +137,6 @@ class InstructorController extends Controller
                 'iconBg' => 'bg-gradient-to-br from-purple-400 to-purple-600',
                 'value' => '23',
                 'label' => 'Pending Grading',
-                'progress' => 45,
                 'trend' => 'down',
                 'trendValue' => '-5',
                 'description' => 'Assignments to review'
@@ -138,104 +146,16 @@ class InstructorController extends Controller
                 'iconBg' => 'bg-gradient-to-br from-orange-400 to-orange-600',
                 'value' => '4.8',
                 'label' => 'Avg Rating',
-                'progress' => 96,
                 'trend' => 'up',
                 'trendValue' => '+0.2',
                 'description' => 'Student feedback'
             ]
         ];
 
-        // Get courses from database for dashboard
-        $courses = Course::all()->map(function ($course) {
-            return [
-                'id' => $course->id,
-                'title' => $course->title,
-                'code' => $course->code,
-                'description' => $course->description,
-                'instructor' => 'Dr. Lorenz', // Default instructor name
-                'enrollment_count' => $course->enrollment_count,
-                'difficulty' => $course->difficulty,
-                'status' => $course->status,
-                'icon' => 'fas fa-book',
-                'students' => $course->enrollment_count,
-                'assignments' => 8, // Default assignment count
-                'progress' => rand(20, 90) // Random progress for demo
-            ];
-        });
+        $notifications = ['assignments' => 8, 'students' => 3];
 
-        $assignments = [
-            [
-                'id' => 1,
-                'title' => 'Programming Exercise 3',
-                'course' => 'CS 101 - Introduction to Programming',
-                'submissions' => 42,
-                'totalStudents' => 45,
-                'dueDate' => 'Jan 20, 2025',
-                'status' => 'pending',
-                'priority' => 'high'
-            ],
-            [
-                'id' => 2,
-                'title' => 'Database Design Project',
-                'course' => 'CS 201 - Database Management',
-                'submissions' => 35,
-                'totalStudents' => 38,
-                'dueDate' => 'Jan 22, 2025',
-                'status' => 'in_progress',
-                'priority' => 'medium'
-            ],
-            [
-                'id' => 3,
-                'title' => 'Network Security Quiz',
-                'course' => 'CS 301 - Computer Networks',
-                'submissions' => 50,
-                'totalStudents' => 52,
-                'dueDate' => 'Jan 18, 2025',
-                'status' => 'pending',
-                'priority' => 'high'
-            ]
-        ];
+        return view('instructor.dashboard', compact('user', 'notifications', 'stats', 'assignments', 'latestEnrollments'));
 
-        $students = [
-            [
-                'id' => 1,
-                'name' => 'Francis',
-                'email' => 'john.doe@student.clsu.edu.ph',
-                'course' => 'CS 101',
-                'lastActivity' => '2 hours ago',
-                'status' => 'active',
-                'avatar' => 'JD'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Lorenz',
-                'email' => 'jane.smith@student.clsu.edu.ph',
-                'course' => 'CS 201',
-                'lastActivity' => '4 hours ago',
-                'status' => 'active',
-                'avatar' => 'JS'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Mike Johnson',
-                'email' => 'mike.johnson@student.clsu.edu.ph',
-                'course' => 'CS 301',
-                'lastActivity' => '1 day ago',
-                'status' => 'inactive',
-                'avatar' => 'MJ'
-            ],
-            [
-                'id' => 4,
-                'name' => 'Sarah Wilson',
-                'email' => 'sarah.wilson@student.clsu.edu.ph',
-                'course' => 'CS 101',
-                'lastActivity' => '3 hours ago',
-                'status' => 'active',
-                'avatar' => 'SW'
-            ]
-        ];
-
-        return view('instructor.dashboard', compact('user', 'notifications', 'stats', 'courses', 'assignments', 'students'));
     }
 
     public function courses()
@@ -254,7 +174,7 @@ class InstructorController extends Controller
                 'id' => $course->id,
                 'title' => $course->title,
                 'code' => $course->code,
-                'description' => $course->description,
+                'description' => html_entity_decode($course->description),
                 'instructor' => 'Dr. Lorenz', // Default instructor name
                 'enrollment_count' => $course->enrollment_count,
                 'difficulty' => $course->difficulty,
@@ -262,147 +182,18 @@ class InstructorController extends Controller
                 'created_at' => $course->created_at,
                 'icon' => 'fas fa-book',
                 'students' => $course->enrollment_count,
-                'assignments' => 8,
-                'nextClass' => 'Tomorrow, 9:00 AM'
+                'assignments' => 0
             ];
         });
 
-        return view('instructor.courses', compact('user', 'notifications', 'allCourses'));
+        return view('instructor.courses.', compact('user', 'notifications', 'allCourses'));
     }
 
-    public function showCourse($id)
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
 
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        // Get course from database
-        $course = Course::find($id);
-
-        if (!$course) {
-            abort(404);
-        }
-
-        // Convert to the format expected by the view
-        $courseData = [
-            'id' => $course->id,
-            'title' => $course->title,
-            'code' => $course->code,
-            'description' => $course->description,
-            'instructor' => [
-                'name' => 'Dr. Lorenz',
-                'department' => 'Computer Science Department',
-                'email' => 'dr.lorenz@clsu.edu.ph',
-                'initials' => 'DL'
-            ],
-            'enrollment_count' => $course->enrollment_count,
-            'difficulty' => $course->difficulty,
-            'status' => $course->status,
-            'assignments' => 8, // Default assignment count
-            'students' => $course->enrollment_count // For compatibility
-        ];
-
-        $students = [
-            ['id' => 1, 'name' => 'Francis', 'email' => 'john.doe@student.clsu.edu.ph', 'status' => 'Active', 'lastActivity' => '2h ago'],
-            ['id' => 2, 'name' => 'Lorenz', 'email' => 'jane.smith@student.clsu.edu.ph', 'status' => 'Active', 'lastActivity' => '4h ago'],
-            ['id' => 3, 'name' => 'Mike Johnson', 'email' => 'mike.johnson@student.clsu.edu.ph', 'status' => 'Inactive', 'lastActivity' => '1d ago'],
-        ];
-
-        // Get course contents from database
-        $contents = CourseContent::where('course_id', $id)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($content) {
-                return [
-                    'id' => $content->id,
-                    'title' => $content->title,
-                    'description' => $content->description,
-                    'status' => $content->status,
-                    'file_path' => $content->file_path,
-                    'uploaded_at' => $content->uploaded_at->format('M j, Y g:i A')
-                ];
-            });
-
-        return view('instructor.course.show', compact('user', 'notifications', 'courseData', 'students', 'contents'));
-    }
-
-    public function editCourse($id)
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        // Get course from database
-        $course = Course::find($id);
-
-        if (!$course) {
-            abort(404);
-        }
-
-        // Convert to the format expected by the view
-        $courseData = [
-            'id' => $course->id,
-            'title' => $course->title,
-            'code' => $course->code,
-            'description' => $course->description,
-            'instructor' => [
-                'name' => 'Dr. Lorenz',
-                'department' => 'Computer Science Department',
-                'email' => 'dr.lorenz@clsu.edu.ph',
-                'initials' => 'DL'
-            ],
-            'enrollment_count' => $course->enrollment_count,
-            'difficulty' => $course->difficulty,
-            'status' => $course->status,
-            'assignments' => 8,
-            'students' => $course->enrollment_count
-        ];
-
-        return view('instructor.course.edit', compact('user', 'notifications', 'courseData'));
-    }
-
-    public function updateCourse(Request $request, $id)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'code' => 'required|string|max:50',
-            'description' => 'required|string',
-            'difficulty' => 'required|in:beginner,intermediate,advanced',
-            'status' => 'required|in:draft,approved,archived'
-        ]);
-
-        $course = Course::find($id);
-        if (!$course) {
-            abort(404);
-        }
-
-        $course->update([
-            'title' => $request->title,
-            'code' => $request->code,
-            'description' => $request->description,
-            'difficulty' => $request->difficulty,
-            'status' => $request->status
-        ]);
-
-        return redirect()->route('instructor.course.show', $id)
-            ->with('success', 'Course updated successfully!');
-    }
 
     public function students()
     {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
+        $user = Auth::user();
 
         $notifications = ['assignments' => 8, 'students' => 3];
         $students = [
@@ -411,6 +202,10 @@ class InstructorController extends Controller
             ['id' => 3, 'name' => 'Mike Johnson', 'email' => 'mike.johnson@student.clsu.edu.ph', 'course' => 'CS 301', 'status' => 'Inactive'],
             ['id' => 4, 'name' => 'Sarah Wilson', 'email' => 'sarah.wilson@student.clsu.edu.ph', 'course' => 'CS 101', 'status' => 'Active'],
         ];
+
+        $students = User::whereHas('courses', function ($query) use ($user) {
+            $query->where('instructor_id', $user->id)->approved();
+        })->get();
         return view('instructor.students', compact('user', 'notifications', 'students'));
     }
 
@@ -505,7 +300,49 @@ class InstructorController extends Controller
         ];
 
         $notifications = ['assignments' => 8, 'students' => 3];
-        return view('instructor.course.create', compact('user', 'notifications'));
+        return view('instructor.courses.create', compact('user', 'notifications'));
+    }
+
+    public function store(Request $request)
+    {
+        $user = Auth::user();
+
+        $plainDescription = strip_tags($request->input('description'));
+
+        // Replace multiple whitespace (spaces, newlines, tabs) with a single space
+        $plainDescription = preg_replace('/\s+/u', ' ', $plainDescription);
+
+        // Trim leading/trailing spaces
+        $plainDescription = trim($plainDescription);
+        $request->merge([
+            'plain_description' => $plainDescription
+        ]);
+
+        $validated = $request->validate([
+            'title' => ['required', 'unique:courses', 'max:100', 'string'],
+            'code' => ['required', 'unique:courses', 'max:20', 'string'],
+            'difficulty' => ['required', 'string'],
+            'status' => ['required', 'string'],
+            'plain_description' => ['required', 'max:255', 'string']
+        ]);
+
+        try {
+            Course::create([
+                'title' => $validated['title'],
+                'code' => $validated['code'],
+                'description' => $request->input('description'),
+                'instructor_id' => $user->id,
+                'status' => $validated['status'],
+                'difficulty' => $validated['difficulty']
+            ]);
+        } catch (\Throwable $th) {
+
+            dd($th);
+            Log::error('Course creation failed: ' . $th->getMessage());
+            return back()->with('error', 'Something went wrong while saving the course.');
+        }
+
+        return redirect()->route('instructor.courses.')->with('success', 'Course Created Successfully');
     }
 
     public function showStudent($id)
@@ -602,7 +439,7 @@ class InstructorController extends Controller
             'instructor' => 'Dr. Lorenz',
         ], $validated);
 
-        return redirect()->route('instructor.courses')->with('status', 'Course created.');
+        return redirect()->route('instructor.courses.')->with('status', 'Course created.');
     }
 
 }

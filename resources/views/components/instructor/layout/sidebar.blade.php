@@ -29,7 +29,7 @@
             <span class="ml-4 font-medium">Dashboard</span>
         </a>
         
-        <a href="{{ route('instructor.courses') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.courses' ? 'active' : '' }}">
+        <a href="{{ route('instructor.courses.index') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.courses.index' ? 'active' : '' }}">
             <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
                 <i class="fas fa-book-open"></i>
             </div>

@@ -8,10 +8,10 @@
                 <p class="text-gray-600 mt-2">{{ $courseData['code'] }} • {{ $courseData['enrollment_count'] }} students</p>
             </div>
             <div class="flex space-x-3">
-                <button class="btn-secondary">
+                <a href="{{ route('instructor.courses.edit', ['course' => $courseData['id']]) }}" class="btn-secondary">
                     <i class="fas fa-edit mr-2"></i>
                     Edit Course
-                </button>
+                </a>
                 <button class="btn-primary">
                     <i class="fas fa-plus mr-2"></i>
                     New Assignment
@@ -30,62 +30,23 @@
                     <div class="text-3xl font-bold text-green-600">{{ $courseData['assignments'] }}</div>
                     <div class="text-sm text-gray-500">Assignments</div>
                 </div>
-
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-slate-600">0</div>
+                    <div class="text-sm text-gray-500">Course Content</div>
+                </div>
             </div>
         </div>
         <!-- Course Description -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Course Description</h2>
-            <p class="text-gray-600">{{ $courseData['description'] }}</p>
+            <p class="text-gray-600">{!! $courseData['description'] !!}</p>
         </div>
         <!-- Students Table -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Enrolled Students</h2>
-                <a href="{{ route('instructor.students') }}"
-                    class="text-sm text-purple-600 hover:text-purple-700 font-medium">View All</a>
             </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last
-                                Activity</th>
-                            <th class="px-4 py-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach(($students ?? []) as $student)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ $student['name'] }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $student['email'] }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <span
-                                        class="text-xs px-2 py-1 rounded-full {{ strtolower($student['status']) === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ $student['status'] }}</span>
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ $student['lastActivity'] }}
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-right">
-                                    <a href="{{ route('instructor.student.show', $student['id']) }}"
-                                        class="text-purple-600 hover:text-purple-800 text-sm">View</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                        @if(empty($students))
-                            <tr>
-                                <td colspan="5" class="px-4 py-6 text-center text-gray-500 text-sm">No students enrolled yet.
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+            @livewire('instructor.course.enrolled-students-table', ['courseId' => $courseData['id']])
         </div>
 
         <!-- Course Materials (Instructor-managed content) -->
@@ -175,17 +136,15 @@
                                         <p class="text-xs text-gray-400">Uploaded: {{ $item['uploaded_at'] }}</p>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('course.content.serve', ['instructor' => 'dr-lorenz', 'file' => basename($item['file_path'])]) }}"
+                                        <a href=""
                                             target="_blank" class="text-blue-600 hover:text-blue-800 text-sm">
                                             <i class="fas fa-download mr-1"></i>Download
                                         </a>
                                         <button
-                                            onclick="document.getElementById('edit-{{ $item['id'] }}').classList.toggle('hidden')"
                                             class="text-gray-600 hover:text-gray-800 text-sm">
                                             <i class="fas fa-edit mr-1"></i>Edit
                                         </button>
                                         <form method="POST"
-                                            action="{{ route('instructor.course.content.delete', [request()->route('id'), $item['id']]) }}"
                                             onsubmit="return confirm('Delete this content?');">
                                             @csrf
                                             @method('DELETE')
@@ -197,7 +156,6 @@
                                 </div>
                                 <div id="edit-{{ $item['id'] }}" class="mt-4 hidden">
                                     <form method="POST"
-                                        action="{{ route('instructor.course.content.update', [request()->route('id'), $item['id']]) }}"
                                         enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         @csrf
                                         @method('PUT')

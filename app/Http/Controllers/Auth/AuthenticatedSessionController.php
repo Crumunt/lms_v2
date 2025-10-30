@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
 
         return match ($role) {
             'admin' => redirect()->route('admin.dashboard'),
-            'instructor' => redirect()->route('dashboard'),
+            'instructor' => redirect()->route('instructor.dashboard'),
             'student' => redirect()->route('student.dashboard'),
             default => redirect()->route('login')->with('error', 'Invalid user role.')
         };

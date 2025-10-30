@@ -6,7 +6,7 @@
             <h1 class="text-3xl font-bold text-gray-800">My Courses</h1>
             <p class="text-gray-600 mt-2">Manage and organize your course materials</p>
         </div>
-        <button class="btn-primary" onclick="window.location.href='{{ route('instructor.course.create') }}'">
+        <button class="btn-primary" onclick="window.location.href='{{ route('instructor.courses.create') }}'">
             <i class="fas fa-plus mr-2"></i>
             Create New Course
         </button>
