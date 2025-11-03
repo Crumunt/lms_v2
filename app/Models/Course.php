@@ -70,6 +70,11 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
+    }
+
     /**
      * Scope a query to only include approved courses.
      */

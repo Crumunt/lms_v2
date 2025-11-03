@@ -44,24 +44,6 @@
                     @enderror
                 </div>
 
-                <!-- Instructor -->
-                <div>
-                    <label for="instructor_id" class="block text-sm font-medium text-gray-700 mb-2">Instructor</label>
-                    <select id="instructor_id" name="instructor_id"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('instructor_id') border-red-500 @enderror"
-                        required>
-                        <option value="">Select instructor</option>
-                        @foreach($instructors as $instructor)
-                            <option value="{{ $instructor->id }}" {{ old('instructor_id', $course->instructor_id) == $instructor->id ? 'selected' : '' }}>
-                                {{ $instructor->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('instructor_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Status -->
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>

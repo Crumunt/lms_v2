@@ -8,7 +8,7 @@
     <!-- Layout Container -->
     <div class="layout-container">
         <!-- Enhanced Sidebar -->
-        <x-admin.layout.sidebar :user="$user" />
+        <x-admin.layout.sidebar :user="$user" :notifications="$notifications" />
 
         <!-- Main Area -->
         <div class="main-area">

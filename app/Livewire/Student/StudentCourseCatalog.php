@@ -7,6 +7,7 @@ use App\Services\EnrollmentService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use Spatie\Activitylog\Contracts\Activity;
 
 class StudentCourseCatalog extends Component
 {
@@ -33,7 +34,7 @@ class StudentCourseCatalog extends Component
             $enrolledCourses = $this->user->courses()->pluck('id');
             $availableCourses = Course::whereNotIn('id', $enrolledCourses)->with('instructor')->get();
         }else {
-            $availableCourses = $this->user->courses()->with('instructor')->get();
+            $availableCourses = $this->user->courses()->with(['instructor', 'enrollments'])->get();
         }
 
         return $availableCourses;
@@ -46,6 +47,14 @@ class StudentCourseCatalog extends Component
         $success = $this->enrollmentService->enroll($this->user, $course);
 
         if ($success) {
+            activity('enrollment')
+            ->performedOn($course)
+            ->withProperties([
+                'course_id' => $course->id,
+                'course_name' => $course->title,
+                'course_code' => $course->code
+            ])
+            ->log('Enrolled in course');
             session()->flash('message', 'Successfully Enrolled in Course!.');
         } else {
             session()->flash('message', 'Something went wrong!.');

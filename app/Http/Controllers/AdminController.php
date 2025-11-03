@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Assignment;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\CourseContent;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
@@ -50,10 +53,11 @@ class AdminController extends Controller
             'instructor_count' => User::role('instructor')->count(),
             'total_courses' => Course::where('status', 'approved')->count(),
             'total_materials' => CourseContent::where('status', 'published')->count(),
+            'assignment_count' => Assignment::where('status', 'published')->count()
         ];
 
         // Get recent enrollments
-        $recentEnrollments = Enrollment::with(['student', 'course', 'course.instructor'])
+        $recentEnrollments = Enrollment::with(['user', 'course', 'course.instructor'])
             ->latest('enrolled_at')
             ->limit(5)
             ->get();
@@ -66,16 +70,40 @@ class AdminController extends Controller
             ->get();
 
         // Get weekly enrollment data for chart (simplified for SQLite)
-        $weeklyEnrollments = Enrollment::where('enrolled_at', '>=', now()->subDays(7))->count();
+        $weeklyEnrollments = $this->fetchEnrollmentData();
 
         $enrollmentData = [
             'labels' => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-            'data' => [0, 0, 0, 0, 0, 0, 0] // Simplified for now
+            'data' => $weeklyEnrollments // Simplified for now
         ];
 
-        $user = $this->getCurrentUser();
+        return view('admin.dashboard', compact('stats', 'recentEnrollments', 'topPerformingCourses', 'enrollmentData'));
+    }
 
-        return view('admin.dashboard', compact('stats', 'recentEnrollments', 'topPerformingCourses', 'enrollmentData', 'user'));
+    private function fetchEnrollmentData()
+    {
+        $startOfWeek = Carbon::now()->startOfWeek(Carbon::SUNDAY);
+        $endOfWeek = Carbon::now()->endOfWeek(Carbon::SATURDAY);
+
+        // Fetch enrollments grouped by day of week
+        $enrollments = Enrollment::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->select(
+                DB::raw('DAYOFWEEK(created_at) as day_of_week'),
+                DB::raw('COUNT(*) as count')
+            )
+            ->groupBy('day_of_week')
+            ->pluck('count', 'day_of_week');
+
+        // Initialize data array with zeros for all days
+        $data = [0, 0, 0, 0, 0, 0, 0];
+
+        // Map the database results to the correct array positions
+        // DAYOFWEEK returns 1=Sunday, 2=Monday, ..., 7=Saturday
+        foreach ($enrollments as $dayOfWeek => $count) {
+            $data[$dayOfWeek - 1] = $count;
+        }
+
+        return $data;
     }
 
     /**
@@ -87,13 +115,7 @@ class AdminController extends Controller
         //     return $redirect;
         // }
 
-        $instructors = User::role('instructor')
-            ->withCount('taughtCourses')
-            ->get();
-
-        $user = $this->getCurrentUser();
-
-        return view('admin.instructors.index', compact('instructors', 'user'));
+        return view('admin.instructors.index');
     }
 
     /**
@@ -173,17 +195,7 @@ class AdminController extends Controller
      */
     public function students()
     {
-        // if ($redirect = $this->checkAdminAccess()) {
-        //     return $redirect;
-        // }
-
-        $students = User::role( 'student')
-            ->withCount('enrollments')
-            ->get();
-
-        $user = $this->getCurrentUser();
-
-        return view('admin.students.index', compact('students', 'user'));
+        return view('admin.students.index');
     }
 
     /**
@@ -220,7 +232,8 @@ class AdminController extends Controller
      */
     public function showStudent(User $student)
     {
-        $student->load('enrolledCourses');
+        $student->load('courses');
+
         return view('admin.students.show', compact('student'));
     }
 
@@ -244,7 +257,26 @@ class AdminController extends Controller
             'status' => 'required|in:pending,approved,rejected',
         ]);
 
-        $student->update($validated);
+
+        DB::beginTransaction();
+        try {
+            $student->update([
+                'email' => $validated['email']
+            ]);
+
+            $student->detail()->update([
+                'full_name' => $validated['name'],
+                'address' => $validated['address'],
+                'status' => $validated['status']
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            Log::error('Something went wrong with updating a user. ' . $th->getMessage());
+            abort(500);
+        }
 
         return redirect()->route('admin.students')->with('success', 'Student updated successfully.');
     }
@@ -271,9 +303,7 @@ class AdminController extends Controller
             ->withCount('enrollments')
             ->get();
 
-        $user = $this->getCurrentUser();
-
-        return view('admin.courses.index', compact('courses', 'user'));
+        return view('admin.courses.index', compact('courses'));
     }
 
     /**
@@ -290,8 +320,7 @@ class AdminController extends Controller
      */
     public function editCourse(Course $course)
     {
-        $instructors = User::where('role', 'instructor')->where('status', 'approved')->get();
-        return view('admin.courses.edit', compact('course', 'instructors'));
+        return view('admin.courses.edit', compact('course'));
     }
 
     /**
@@ -303,7 +332,6 @@ class AdminController extends Controller
             'title' => 'required|string|max:255',
             'code' => 'required|string|max:50',
             'description' => 'required|string|max:1000',
-            'instructor_id' => 'required|exists:users,id',
             'status' => 'required|in:pending,approved,rejected,active,inactive,archived,draft',
             'difficulty' => 'required|in:beginner,intermediate,advanced',
         ]);

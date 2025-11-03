@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Course\AssignmentController;
 use App\Http\Controllers\CourseContentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
@@ -8,14 +9,6 @@ use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -38,6 +31,9 @@ Route::middleware('auth')->group(function () {
             return view('student.assignments');
         })->name('assignments');
 
+        Route::get('/course/{course}/assignment/{assignment}', [StudentController::class, 'showAssignment'])->name('course.assignment');
+        Route::post('/course/{course}/assignment/{assignment}', [StudentController::class, 'submitAssignment'])->name('course.assignment.store');
+
         Route::get('/grades', function () {
             return view('student.grades');
         })->name('grades');
@@ -54,22 +50,23 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:instructor')->prefix('instructor')->name('instructor.')->group(function () {
         Route::get('/dashboard', [InstructorController::class, 'index'])->name('dashboard');
         Route::resource('courses', CourseController::class);
-        // Route::get('/courses', [InstructorController::class, 'courses'])->name('courses');
-        // Route::get('/courses/{id}', [InstructorController::class, 'showCourse'])->name('course.show');
-        // Route::get('/courses/{id}/edit', [InstructorController::class, 'editCourse'])->name('course.edit');
-        // Route::put('/courses/{id}', [InstructorController::class, 'updateCourse'])->name('course.update');
-        // Route::get('/course/create', [InstructorController::class, 'createCourse'])->name('course.create');
-        // Route::post('/course', [InstructorController::class, 'store'])->name('course.store');
+
+        Route::prefix('/courses/{course}')->name('courses.')->group(function() {
+            Route::resource('content', CourseContentController::class);
+            Route::get('/{content}/download', [CourseContentController::class, 'download'])->name('content.download');
+        });
+
         Route::post('/courses/{id}/contents', [CourseContentController::class, 'store'])->name('course.content.store');
         Route::put('/courses/{id}/contents/{contentId}', [CourseContentController::class, 'update'])->name('course.content.update');
         Route::delete('/courses/{id}/contents/{contentId}', [CourseContentController::class, 'destroy'])->name('course.content.delete');
 
+
         Route::get('/students', [InstructorController::class, 'students'])->name('students');
         Route::get('/students/{id}', [InstructorController::class, 'showStudent'])->name('student.show');
 
-        Route::get('/assignments', [InstructorController::class, 'assignments'])->name('assignments');
-        Route::get('/assignments/{id}', [InstructorController::class, 'showAssignment'])->name('assignment.show');
-        Route::get('/assignment/create', [InstructorController::class, 'createAssignment'])->name('assignment.create');
+        Route::prefix('courses/{course}')->name('courses.')->group(function () {
+            Route::resource('assignments', AssignmentController::class);
+        });
 
         Route::get('/grades', [InstructorController::class, 'grades'])->name('grades');
         Route::get('/analytics', [InstructorController::class, 'analytics'])->name('analytics');

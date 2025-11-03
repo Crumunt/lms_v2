@@ -6,7 +6,7 @@
     <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-white mb-8 shadow-xl">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-bold mb-2">Welcome back, {{ $user['name'] }}!</h1>
+                <h1 class="text-3xl font-bold mb-2">Welcome back, {{ $user->detail?->full_name }}!</h1>
                 <p class="text-green-100 text-lg">Here's what's happening with your LMS today.</p>
             </div>
             <div class="hidden md:block">
@@ -23,33 +23,25 @@
             icon="fas fa-user-graduate" 
             iconBg="bg-gradient-to-br from-blue-400 to-blue-600" 
             :value="$stats['student_count']" 
-            label="Total Students" 
-            change="+12%" 
-            changeType="positive" 
+            label="Total Students"
         />
         <x-admin.cards.stat-card 
             icon="fas fa-chalkboard-teacher" 
             iconBg="bg-gradient-to-br from-purple-400 to-purple-600" 
             :value="$stats['instructor_count']" 
             label="Total Instructors" 
-            change="+3%" 
-            changeType="positive" 
         />
         <x-admin.cards.stat-card 
             icon="fas fa-book" 
             iconBg="bg-gradient-to-br from-orange-400 to-orange-600" 
             :value="$stats['total_courses']" 
             label="Active Courses" 
-            change="+8%" 
-            changeType="positive" 
         />
         <x-admin.cards.stat-card 
             icon="fas fa-file-alt" 
             iconBg="bg-gradient-to-br from-red-400 to-red-600" 
             :value="$stats['total_materials']" 
             label="Course Materials" 
-            change="+15%" 
-            changeType="positive" 
         />
     </div>
 
@@ -80,8 +72,8 @@
                     <div class="text-sm text-gray-600">Total Modules</div>
                 </div>
                 <div class="text-center p-4 bg-yellow-50 rounded-lg">
-                    <div class="text-2xl font-bold text-yellow-600">0</div>
-                    <div class="text-sm text-gray-600">Total Quizzes</div>
+                    <div class="text-2xl font-bold text-yellow-600">{{ $stats['assignment_count'] }}</div>
+                    <div class="text-sm text-gray-600">Total Assignments</div>
                 </div>
             </div>
         </div>
@@ -108,9 +100,9 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($recentEnrollments as $enrollment)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ $enrollment->student->name }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $enrollment->course->title }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $enrollment->course->instructor->name }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ $enrollment->user?->detail?->full_name }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $enrollment->course?->title }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $enrollment->course?->instructor?->detail?->full_name }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ $enrollment->enrolled_at->format('M d, Y') }}</td>
                             </tr>
                         @empty
@@ -143,7 +135,7 @@
                         @forelse($topPerformingCourses as $course)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ $course->title }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $course->instructor->name }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ $course->instructor?->detail?->full_name }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="badge badge-info">{{ $course->enrollment_count }}</span>
                                 </td>

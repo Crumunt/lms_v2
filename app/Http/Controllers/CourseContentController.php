@@ -2,173 +2,105 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CourseContentRequest;
 use App\Models\Course;
 use App\Models\CourseContent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CourseContentController extends Controller
 {
+
+    public function index(Course $course)
+    {
+        $course->load('contents');
+
+        $course_content = $course->contents;
+
+        $contents = (object) [
+            'total' => $course->contents()->count(),
+            'published' => $course->contents()->published()->count(),
+            'draft' => $course->contents()->draft()->count(),
+            'archived' => $course->contents()->archived()->count()
+        ];
+        return view('instructor.course.content.index', compact('course', 'contents', 'course_content'));
+    }
+
+    public function create(Course $course)
+    {
+        return view('instructor.course.content.create', compact('course'));
+    }
+
     /**
      * Store a newly created course content.
      */
-    public function store(Request $request, $courseId)
+    public function store(CourseContentRequest $request, Course $course)
     {
-        try {
-            $request->validate([
-                'title' => 'required|string|max:255',
-                'description' => 'required|string',
-                'status' => 'required|in:draft,published,archived',
-                'file' => 'required|file|mimes:pdf|max:10240', // 10MB max
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
-            ], 422);
-        }
+        $data = $request->getValidatedWithFile();
 
         try {
-            $course = Course::findOrFail($courseId);
-            
-            // Get the instructor name for directory structure
-            $instructorName = $course->instructor->name ?? 'instructor';
-            $instructorName = Str::slug($instructorName);
-            
-            // Generate unique filename
-            $file = $request->file('file');
-            $extension = $file->getClientOriginalExtension();
-            $filename = Str::random(16) . '.' . $extension;
-            
-            // Store file in instructor-specific directory
-            $path = $file->storeAs(
-                "course_contents/{$instructorName}/{$courseId}",
-                $filename,
-                'public'
-            );
-
-            // Create course content record
-            $content = CourseContent::create([
-                'course_id' => $courseId,
-                'title' => $request->title,
-                'description' => $request->description,
-                'file_path' => $path,
-                'status' => $request->status,
-                'uploaded_at' => now(),
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Course content uploaded successfully!',
-                'content' => $content
-            ]);
-
-        } catch (\Exception $e) {
-            \Log::error('Course content upload failed', [
-                'course_id' => $courseId,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to upload content: ' . $e->getMessage()
-            ], 500);
+            $course->contents()->create($data);
+        } catch (\Throwable $th) {
+            Log::error('Something went wrong ' . $th->getMessage());
+            abort(500);
         }
+
+        return redirect()
+            ->route('instructor.courses.content.index', $course)
+            ->with('success', 'Content uploaded successfully!');
+    }
+
+    public function edit(Course $course, CourseContent $content)
+    {
+        return view('instructor.course.content.edit', compact('course', 'content'));
     }
 
     /**
      * Update the specified course content.
      */
-    public function update(Request $request, $courseId, $contentId)
+    public function update(CourseContentRequest $request, Course $course, CourseContent $content)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'status' => 'required|in:draft,published,archived',
-            'file' => 'nullable|file|mimes:pdf|max:5120',
-        ]);
+        $data = $request->getValidatedWithFileUpdate($content);
 
         try {
-            $content = CourseContent::where('course_id', $courseId)
-                ->where('id', $contentId)
-                ->firstOrFail();
-
-            $content->title = $request->title;
-            $content->description = $request->description;
-            $content->status = $request->status;
-
-            // Handle file replacement if provided
-            if ($request->hasFile('file')) {
-                // Delete old file
-                if ($content->file_path && Storage::disk('public')->exists($content->file_path)) {
-                    Storage::disk('public')->delete($content->file_path);
-                }
-
-                // Upload new file
-                $course = Course::findOrFail($courseId);
-                $instructorName = $course->instructor->name ?? 'instructor';
-                $instructorName = Str::slug($instructorName);
-                
-                $file = $request->file('file');
-                $extension = $file->getClientOriginalExtension();
-                $filename = Str::random(16) . '.' . $extension;
-                
-                $path = $file->storeAs(
-                    "course_contents/{$instructorName}/{$courseId}",
-                    $filename,
-                    'public'
-                );
-
-                $content->file_path = $path;
-                $content->uploaded_at = now();
-            }
-
-            $content->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Course content updated successfully!',
-                'content' => $content
-            ]);
-
+            $content->update($data);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update content: ' . $e->getMessage()
-            ], 500);
+            Log::error('Something went wrong with updating the content ' . $e->getMessage());
+            abort(500);
         }
+
+        return redirect()
+            ->route('instructor.courses.content.index', $course)
+            ->with('success', 'Content uploaded successfully!');
     }
 
     /**
      * Remove the specified course content.
      */
-    public function destroy($courseId, $contentId)
+    public function destroy(Course $course, CourseContent $content)
     {
-        try {
-            $content = CourseContent::where('course_id', $courseId)
-                ->where('id', $contentId)
-                ->firstOrFail();
 
-            // Delete file from storage
-            if ($content->file_path && Storage::disk('public')->exists($content->file_path)) {
-                Storage::disk('public')->delete($content->file_path);
-            }
+        if($course->instructor_id !== Auth::id()) {
+            abort(403, "You aren't authorized to delete this data.");
+        }
+
+        try {
+
+            // * DELETE FILE
+            Storage::disk('public')->delete($content->file_path);
 
             $content->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Course content deleted successfully!'
-            ]);
-
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete content: ' . $e->getMessage()
-            ], 500);
+            Log::error('Something went wrong with deleting the object. ' . $e->getMessage());
+            abort(500);
         }
+
+        return redirect()
+            ->route('instructor.courses.content.index', $course)
+            ->with('success', 'Content uploaded successfully!');
     }
 
     /**
@@ -179,7 +111,7 @@ class CourseContentController extends Controller
         try {
             // Build file path
             $filePath = "course_contents/{$instructor}/{$file}";
-            
+
             // Check if file exists
             if (!Storage::disk('public')->exists($filePath)) {
                 abort(404, 'File not found');
@@ -188,7 +120,7 @@ class CourseContentController extends Controller
             // Get file info
             $fullPath = Storage::disk('public')->path($filePath);
             $mimeType = Storage::disk('public')->mimeType($filePath);
-            
+
             // Validate it's a PDF
             if ($mimeType !== 'application/pdf') {
                 abort(400, 'Invalid file type');
@@ -204,5 +136,10 @@ class CourseContentController extends Controller
         } catch (\Exception $e) {
             abort(404, 'File not found');
         }
+    }
+
+    public function download(Course $course, CourseContent $courseContent)
+    {
+
     }
 }

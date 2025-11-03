@@ -21,6 +21,6 @@
         <x-student.sections.recent-activities :activities="$activities" />
 
         <!-- Upcoming Events -->
-        <x-student.sections.upcoming-events :events="$events" />
+        <x-student.sections.upcoming-events :assignments="$assignments" />
     </div>
 @endsection

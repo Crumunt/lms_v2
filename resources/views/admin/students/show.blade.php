@@ -29,13 +29,13 @@
                 <div class="text-center">
                     <div
                         class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-white text-2xl font-bold">{{ substr($student->name, 0, 2) }}</span>
+                        <span class="text-white text-2xl font-bold">{{ substr(strtoupper($student->detail?->full_name), 0, 2) }}</span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $student->name }}</h3>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $student->detail?->full_name }}</h3>
                     <p class="text-gray-600 mb-4">{{ $student->email }}</p>
                     <span
-                        class="badge {{ $student->status === 'approved' ? 'badge-success' : ($student->status === 'pending' ? 'badge-warning' : 'badge-danger') }}">
-                        {{ ucfirst($student->status) }}
+                        class="badge {{ $student->detail?->status->name === 'approved' ? 'badge-success' : ($student->detail?->status->name === 'pending' ? 'badge-warning' : 'badge-danger') }}">
+                        {{ ucfirst($student->detail?->status->name) }}
                     </span>
                 </div>
 
@@ -61,12 +61,12 @@
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-bold text-gray-800">Enrolled Courses</h3>
-                    <span class="badge badge-info">{{ $student->enrolledCourses->count() }} courses</span>
+                    <span class="badge badge-info">{{ $student->courses->count() }} courses</span>
                 </div>
 
-                @if($student->enrolledCourses->count() > 0)
+                @if($student->courses->count() > 0)
                     <div class="space-y-4">
-                        @foreach($student->enrolledCourses as $course)
+                        @foreach($student->courses as $course)
                             <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center justify-between">
                                     <div class="flex-1">
@@ -80,7 +80,7 @@
                                             </span>
                                             <span class="text-sm text-gray-500">
                                                 <i class="fas fa-calendar mr-1"></i>
-                                                Enrolled {{ $course->pivot->enrolled_at->format('M d, Y') }}
+                                                Enrolled {{ $course->pivot->created_at->format('M d, Y') }}
                                             </span>
                                         </div>
                                     </div>

@@ -13,7 +13,7 @@
         <div class="flex items-center space-x-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">{{ $title }}</h1>
-                <p class="text-sm text-gray-600">Welcome back, {{ $user['name'] }}</p>
+                <p class="text-sm text-gray-600">Welcome back, {{ $user->detail?->full_name }}</p>
             </div>
         </div>
         
@@ -29,25 +29,15 @@
                        placeholder="Search...">
             </div>
             
-            <!-- Notifications -->
-            <div class="relative">
-                <button class="p-2 text-gray-400 hover:text-gray-600 relative transition-colors duration-200">
-                    <i class="fas fa-bell text-lg"></i>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center notification-badge">
-                        3
-                    </span>
-                </button>
-            </div>
-            
             <!-- User Menu -->
             <div class="flex items-center space-x-3">
                 <div class="text-right hidden sm:block">
-                    <p class="text-sm font-medium text-gray-800">{{ $user['name'] }}</p>
-                    <p class="text-xs text-gray-500">{{ $user['role'] }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $user->detail?->full_name }}</p>
+                    <p class="text-xs text-gray-500">{{ $user->roles->first()->name }}</p>
                 </div>
                 <div class="relative group">
                     <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-200">
-                        <span class="text-white font-bold text-sm">{{ $user['initials'] }}</span>
+                        <span class="text-white font-bold text-sm">{{ substr(strtoupper($user->detail?->full_name), 0,2) }}</span>
                     </div>
                     
                     <!-- Dropdown Menu -->
@@ -55,8 +45,8 @@
                         <div class="py-2">
                             <!-- User Info -->
                             <div class="px-4 py-3 border-b border-gray-100">
-                                <p class="text-sm font-medium text-gray-800">{{ $user['name'] }}</p>
-                                <p class="text-xs text-gray-500">{{ $user['role'] }}</p>
+                                <p class="text-sm font-medium text-gray-800">{{ $user->detail?->full_name }}</p>
+                                <p class="text-xs text-gray-500">{{ $user->roles->first()->name }}</p>
                             </div>
                             
                             <!-- Menu Items -->

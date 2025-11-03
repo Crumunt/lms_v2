@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Helpers\AdminUserHelper;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +22,6 @@ class User extends Authenticatable
      * @var list<string>
      */
 
-    protected $keyType = 'string';
-    public $incrementing = false;
     protected $fillable = [
         'email',
         'password',
@@ -60,6 +61,23 @@ class User extends Authenticatable
         return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id')->withTimestamps();
     }
 
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'student_id', 'id');
+    }
+
+    public function enrolledAssignments()
+    {
+        return $this->hasManyThrough(
+            Assignment::class,
+            Enrollment::class, // or your pivot model
+            'student_id',      // Foreign key on enrollments table
+            'course_id',    // Foreign key on assignments table
+            'id',           // Local key on users table
+            'course_id'     // Local key on enrollments table
+        );
+    }
+
     public function taughtCourses()
     {
         return $this->hasMany(Course::class, 'instructor_id');
@@ -72,4 +90,17 @@ class User extends Authenticatable
     {
         return $query->where('status', 'approved');
     }
+
+
+public function scopeWithStatusData($query)
+{
+    return $query->paginate(10)->map(function ($user) {
+        $status = $user->detail?->status->name;
+        $user->status_badge = AdminUserHelper::getStatusBadge($status);
+        $user->status_class = AdminUserHelper::getStatusBadgeClass($status);
+        $user->status_text_class = AdminUserHelper::getStatusTextClass($status);
+        $user->status_label = AdminUserHelper::getStatusLabel($status);
+        return $user;
+    });
+}
 }

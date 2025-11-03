@@ -42,7 +42,8 @@
             <div class="space-x-2">
                 @if($isEnroll)
                     <!-- Available course (catalog) -->
-                    <button class="btn-primary text-sm px-4 py-2" wire:click="enroll('{{ $course->id }}')"
+                    @can('enroll', [\App\Models\Enrollment::class, $course])
+                        <button class="btn-primary text-sm px-4 py-2" wire:click="enroll('{{ $course->id }}')"
                         wire:loading.attr="disabled"
                         wire:target="enroll('{{ $course->id }}')"
                     >
@@ -55,26 +56,29 @@
                             Enrolling...
                         </span>
                     </button>
+                    @endcan
                 @else
                     <!-- Enrolled course (dashboard/courses) -->
                     <button class="btn-primary text-sm px-4 py-2" onclick="event.stopPropagation(); window.location.href='{{ route('student.course.show', $course['id']) }}'">
                         <i class="fas fa-eye mr-1"></i>
                         View
                     </button>
-                    <button class="btn-secondary text-sm px-4 py-2" wire:click="cancelEnrollment('{{ $course->id }}')"
+                    @can('unenroll', [\App\Models\Enrollment::class, $course->enrollments])
+                        <button class="btn-secondary text-sm px-4 py-2" wire:click="cancelEnrollment('{{ $course->id }}')"
                         wire:loading.attr="disabled"
                         wire:target="cancelEnrollment('{{ $course->id }}')"
                     >
-                        <span wire:loading.remove wire:target="cancelEnrollment('{{ $course->id }}')">
-                            <i class="fas fa-times mr-1"></i>
-                            Unenroll
-                        </span>
+                            <span wire:loading.remove wire:target="cancelEnrollment('{{ $course->id }}')">
+                                <i class="fas fa-times mr-1"></i>
+                                Unenroll
+                            </span>
 
-                        <span wire:loading wire:target="cancelEnrollment('{{ $course->id }}')">
-                            <i class="fas fa-spinner fa-spin mr-1"></i>
-                            Removing...
-                        </span>
-                    </button>
+                            <span wire:loading wire:target="cancelEnrollment('{{ $course->id }}')">
+                                <i class="fas fa-spinner fa-spin mr-1"></i>
+                                Removing...
+                            </span>
+                        </button>
+                    @endcan
                 @endif
             </div>
         </div>

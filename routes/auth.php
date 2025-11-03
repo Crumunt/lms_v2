@@ -8,7 +8,9 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -33,9 +35,25 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
+
+    Route::get('auth/{provider}', [SocialiteController::class, 'redirectToProvider'])
+    ->name('social.redirect');
+
+    
+    Route::get('auth/{provider}/callback', [SocialiteController::class, 'handleProviderCallback'])
+    ->name('social.callback');
+
+
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/select-role', [RoleController::class, 'showRoleSelection'])
+        ->name('role.select');
+    
+    Route::post('/select-role', [RoleController::class, 'selectRole'])
+        ->name('role.store');
+
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

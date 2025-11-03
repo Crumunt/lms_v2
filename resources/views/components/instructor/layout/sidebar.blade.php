@@ -1,13 +1,6 @@
 @props([
-    'user' => [
-        'name' => 'Dr. Lorenz',
-        'department' => 'Computer Science',
-        'initials' => 'JS'
-    ],
-    'notifications' => [
-        'assignments' => 8,
-        'students' => 3
-    ]
+    'user',
+    'notifications'
 ])
 
 <div id="sidebar" class="sidebar">
@@ -44,23 +37,15 @@
             <span class="ml-4 font-medium">Students</span>
             <span class="ml-auto notification-badge bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{{ $notifications['students'] }}</span>
         </a>
-        
-        <a href="{{ route('instructor.resources') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'instructor.resources' ? 'active' : '' }}">
-            <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
-                <i class="fas fa-folder"></i>
-            </div>
-            <span class="ml-4 font-medium">Resources</span>
-        </a>
     </nav>
     
     <div class="p-4 border-t border-white border-opacity-20">
         <div class="flex items-center p-3 rounded-xl hover:bg-white hover:bg-opacity-10 transition cursor-pointer">
             <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center font-bold text-white shadow-lg">
-                {{ $user['initials'] }}
+                {{ strtoupper(substr($user->detail?->full_name, 0, 2)) }}
             </div>
             <div class="ml-3 flex-1">
-                <p class="text-sm font-semibold">{{ $user['name'] }}</p>
-                <p class="text-xs opacity-70">{{ $user['department'] }}</p>
+                <p class="text-sm font-semibold">{{ $user->detail?->full_name }}</p>
             </div>
         </div>
     </div>

@@ -46,19 +46,12 @@
             <span class="ml-4 font-medium">Course Catalog</span>
         </a>
 
-                       
-        <a href="{{ route('student.resources') }}" class="flex items-center px-4 py-3 text-white sidebar-item {{ Route::currentRouteName() === 'student.resources' ? 'active' : '' }}">
-            <div class="sidebar-icon bg-white bg-opacity-20 w-10 h-10 rounded-xl flex items-center justify-center">
-                <i class="fas fa-folder"></i>
-            </div>
-            <span class="ml-4 font-medium">Resources</span>
-        </a>
     </nav>
     
     <div class="p-4 border-t border-white border-opacity-20">
         <div class="flex items-center p-3 rounded-xl hover:bg-white hover:bg-opacity-10 transition cursor-pointer">
             <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center font-bold text-white shadow-lg">
-                {{ $user['initials'] }}
+                {{ strtoupper(substr($user->detail?->full_name, 0, 2)) }}
             </div>
             <div class="ml-3 flex-1">
                 <p class="text-sm font-semibold">{{ $user->detail?->full_name }}</p>

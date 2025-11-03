@@ -5,7 +5,8 @@ namespace App;
 enum UserStatus:string
 {
     //
-    case Active = 'active';
-    case Inactive = 'inactive';
-    case Deactivated = 'deactivated';
+    case pending = 'pending';
+    case active = 'active';
+    case inactive = 'inactive';
+    case deactivated = 'deactivated';
 }

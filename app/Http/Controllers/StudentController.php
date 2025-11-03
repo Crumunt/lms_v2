@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AssignmentHelper;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\CourseContent;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Requests\AssignmentRequest;
+use App\Models\Assignment;
+use App\Models\AssignmentSubmission;
 use App\Services\EnrollmentService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Spatie\Activitylog\Models\Activity;
 
 class StudentController extends Controller
 {
@@ -26,8 +32,9 @@ class StudentController extends Controller
         $enrolledCourses = $user->courses->count();
 
         // ! TO BE FILLED
-        $activities = [];
-        $events = [];
+        $activities = Activity::causedBy($user)->latest()->get();
+        $student_id = $user->id;
+        $assignments = $user->enrolledAssignments()->where('status', 'published')->latest()->get();
 
         $stats = [
             [
@@ -60,84 +67,21 @@ class StudentController extends Controller
             ]
         ];
 
-        return view('student.dashboard', compact('user', 'activities', 'events', 'stats'));
+        return view('student.dashboard', compact('user', 'activities', 'assignments', 'stats'));
     }
 
     public function courses1()
     {
         $user = Auth::user();
-
-        $courses = [
-            [
-                'id' => 'cs101',
-                'title' => 'Introduction to Programming',
-                'code' => 'CS 101',
-                'description' => 'Learn the fundamentals of computer programming with Python and JavaScript.',
-                'progress' => 78,
-                'students' => 45,
-                'icon' => 'fas fa-code'
-            ],
-            [
-                'id' => 'cs201',
-                'title' => 'Database Management',
-                'code' => 'CS 201',
-                'description' => 'Master SQL and database design principles for modern applications.',
-                'progress' => 65,
-                'students' => 38,
-                'icon' => 'fas fa-database'
-            ],
-            [
-                'id' => 'cs301',
-                'title' => 'Computer Networks',
-                'code' => 'CS 301',
-                'description' => 'Understanding network protocols, security, and infrastructure.',
-                'progress' => 42,
-                'students' => 52,
-                'icon' => 'fas fa-network-wired'
-            ],
-            [
-                'id' => 'cs401',
-                'title' => 'Mobile App Development',
-                'code' => 'CS 401',
-                'description' => 'Build cross-platform mobile applications using React Native.',
-                'progress' => 90,
-                'students' => 29,
-                'icon' => 'fas fa-mobile-alt'
-            ],
-            [
-                'id' => 'cs501',
-                'title' => 'Cybersecurity Fundamentals',
-                'code' => 'CS 501',
-                'description' => 'Learn about network security, encryption, and ethical hacking.',
-                'progress' => 35,
-                'students' => 41,
-                'icon' => 'fas fa-shield-alt'
-            ],
-            [
-                'id' => 'cs601',
-                'title' => 'Artificial Intelligence',
-                'code' => 'CS 601',
-                'description' => 'Introduction to machine learning, neural networks, and AI algorithms.',
-                'progress' => 28,
-                'students' => 33,
-                'icon' => 'fas fa-brain'
-            ]
-        ];
-
-        $notifications = ['courses' => 5, 'assignments' => 2];
-
         $enrolledCourses = $user->courses()->with('instructor')->withTimestamps()->get();
 
-        return view('student.courses', compact('user', 'notifications', 'enrolledCourses'));
+        return view('student.courses', compact('enrolledCourses'));
     }
 
     public function showCourse($id)
     {
         // GET AUTHENTICATED USER
         $user = Auth::user();
-
-        // TO BE ADDED
-        $notifications = ['courses' => 5, 'assignments' => 2];
 
         // GET ENROLLED COURSE
         $enrolledCourse = $user->courses()->with('instructor')->find($id);
@@ -146,70 +90,114 @@ class StudentController extends Controller
             return redirect()->route('student.catalog')->with('error', 'You are not enrolled in this course.');
         }
 
+        // FETCH ALL ASSIGNMENTS AND ADD FLAG IF SUBMITTED OR NAH
+        $assignments = $enrolledCourse->assignments()
+            ->where('status', 'published')
+            ->withExists([
+                'submissions as is_submitted' => function ($q) use ($user) {
+                    $q->where('student_id', $user->id);
+                }
+            ])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $assignments = $this->transformAssignments($assignments);
+
         // Get course content
-        $contentData = $enrolledCourse->contents->first();
-        // dd($contentData);
-        $courseData = [
-            'id' => $enrolledCourse->id,
-            'title' => $enrolledCourse->title,
-            'code' => $enrolledCourse->code,
-            'description' => $enrolledCourse->description,
-            'instructor' => [
-                'name' => $enrolledCourse->instructor?->detail?->full_name,
-                'department' => 'Computer Science Department',
-                'email' => $enrolledCourse->instructor?->email,
-                'initials' => substr($enrolledCourse->instructor?->detail?->full_name, 0, 2)
-            ],
-            'enrolled' => true,
-            'enrollmentDate' => $enrolledCourse->pivot->created_at->format('M j, Y'),
-            'icon' => 'fas fa-book'
-        ];
+        $course_content = $enrolledCourse->contents->where('status', 'published');
 
-        return view('student.course.show', compact('user', 'notifications', 'courseData', 'contentData'));
+        return view('student.course.show', compact('course_content', 'enrolledCourse', 'assignments'));
     }
 
-    public function enroll($course)
+    private function transformAssignments($assignments)
     {
+        return $assignments->map(function ($assignment) {
+            $styling = AssignmentHelper::getAssignmentStyling($assignment->is_submitted, $assignment->due_date);
 
-        $user = Auth::user();
+            $assignment->status_badge = $styling['status'];
+            $assignment->icon_color = $styling['icon_color'];
+            $assignment->border_color = $styling['border_color'];
+            $assignment->hover_color = $styling['hover_color'];
+            $assignment->formatted_due_date = AssignmentHelper::formatDueDate($assignment->due_date);
+            $assignment->is_urgent = AssignmentHelper::isUrgent($assignment->due_date);
 
-        dd($course);
-
-        // if($this->enrollmentService->isUserEnrolled($user, ))
-
-    }
-
-    public function toggleEnrollment(Request $request, $id)
-    {
-        $enrolledIds = session('enrollments', []);
-        $isUnenrolling = $request->has('unenroll');
-
-        if ($isUnenrolling) {
-            $enrolledIds = array_values(array_filter($enrolledIds, function ($courseId) use ($id) {
-                return $courseId !== $id;
-            }));
-            session(['enrollments' => $enrolledIds]);
-            return redirect()->back()->with('status', 'You have unenrolled from the course.');
-        }
-
-        if (!in_array($id, $enrolledIds, true)) {
-            $enrolledIds[] = $id;
-            session(['enrollments' => $enrolledIds]);
-        }
-
-        return redirect()->back()->with('status', 'You have enrolled in the course.');
+            return $assignment;
+        });
     }
 
     public function catalog()
     {
+        return view('student.catalog');
+    }
+
+    public function showAssignment(Course $course, Assignment $assignment)
+    {
+        $user = Auth::user();
+        $assignment = Assignment::where('id', $assignment->id)
+            ->where('course_id', $course->id)
+            ->withExists([
+                'submissions as is_submitted' => function ($q) use ($user) {
+                    $q->where('student_id', $user->id);
+                }
+            ])
+            ->firstOrFail();
+
+        $styling = AssignmentHelper::getAssignmentStyling($assignment->is_submitted, $assignment->due_date);
+        $assignment->status_badge = $styling['status'];
+        $assignment->icon_color = $styling['icon_color'];
+        $assignment->border_color = $styling['border_color'];
+        $assignment->hover_color = $styling['hover_color'];
+        $assignment->formatted_due_date = AssignmentHelper::formatDueDate($assignment->due_date);
+        $assignment->is_urgent = AssignmentHelper::isUrgent($assignment->due_date);
+
+        $submission = $assignment->submissions()?->first() ?? null;
+        
+        return view('student.course.assignment.show', compact('course', 'assignment', 'submission'));
+    }
+
+    public function submitAssignment(Request $request, Course $course, Assignment $assignment)
+    {
         $user = Auth::user();
 
-        $notifications = ['courses' => 5, 'assignments' => 2];
+        $validated = $request->validate([
+            'file' => ['required', 'file', 'mimes:pdf', 'max:10240']
+        ]);
 
-        // Get available courses from database
-        $enrolledCourses = $user->courses()->pluck('courses.id');
-        $availableCourses = Course::whereNotIn('id', $enrolledCourses)->with('instructor')->get();
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
 
-        return view('student.catalog', compact('user', 'notifications'));
+            // Generate unique filename
+            $fileName = time() . '_' . $file->hashName();
+
+            // Store file in storage/app/public/course-contents
+            $filePath = $file->storeAs('assignment-uploads', $fileName, 'public');
+
+            // Add file information to validated data
+            $validated['file_path'] = $filePath;
+        }
+
+        $validated['assignment_id'] = $assignment->id;
+        $validated['student_id'] = $user->id;
+        $validated['submitted_at'] = now();
+
+        try {
+            $assignment = AssignmentSubmission::create($validated);
+
+            activity('assignment submission')
+            ->performedOn($assignment)
+            ->withProperties([
+                'course_id' => $course->id,
+                'course_title' => $course->title,
+                'course_code' => $course->code,
+                'assignment_id' => $assignment->id,
+                'assignment_title' => $assignment->title
+            ])
+            ->log('Student has submitted assignment.');
+        } catch (\Throwable $th) {
+            Log::error('Something went wrong with assignment submission ' . $th->getMessage());
+            abort(500);
+        }
+
+        return redirect()->back()->with('message', 'Assignment has been successfully turned in.');
     }
 }

@@ -1,11 +1,6 @@
 @props([
-    'user' => [
-        'name' => 'Admin User',
-        'role' => 'Administrator',
-        'initials' => 'AU'
-    ],
-    'activeItem' => 'dashboard',
-    'notifications' => ['users' => 0, 'courses' => 0]
+    'user',
+    'notifications'
 ])
 
 <div id="sidebar" class="sidebar">
@@ -15,11 +10,11 @@
     <div class="p-6 border-b border-white/20">
         <div class="flex items-center space-x-3">
             <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
-                <span class="text-white font-bold text-lg">{{ $user['initials'] }}</span>
+                <span class="text-white font-bold text-lg">{{ substr(strtoupper($user->detail?->full_name),0,2) }}</span>
             </div>
             <div>
-                <h3 class="text-white font-semibold">{{ $user['name'] }}</h3>
-                <p class="text-xs text-yellow-200">{{ $user['role'] }}</p>
+                <h3 class="text-white font-semibold">{{ $user->detail?->full_name }}</h3>
+                <p class="text-xs text-yellow-200">{{ $user->roles->first()->name }}</p>
             </div>
         </div>
     </div>
@@ -62,20 +57,6 @@
                     {{ $notifications['courses'] }}
                 </span>
             @endif
-        </a>
-        
-        <!-- Reports -->
-        <a href="#" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.reports' ? 'active' : '' }}">
-            <i class="fas fa-chart-bar sidebar-icon mr-3 text-lg"></i>
-            <span>Reports</span>
-        </a>
-        
-        <!-- Settings -->
-        <a href="#" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.settings' ? 'active' : '' }}">
-            <i class="fas fa-cog sidebar-icon mr-3 text-lg"></i>
-            <span>Settings</span>
         </a>
     </nav>
     

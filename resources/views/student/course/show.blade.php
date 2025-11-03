@@ -5,15 +5,15 @@
     <div class="bg-gradient-to-r from-green-600 to-green-500 text-white rounded-2xl p-8 mb-8">
         <div class="flex items-center space-x-6">
             <div class="w-20 h-20 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                <i class="{{ $courseData['icon'] }} text-4xl"></i>
+                <i class="fas fa-book text-4xl"></i>
             </div>
             <div class="flex-1">
-                <h1 class="text-3xl font-bold mb-2">{{ $courseData['title'] }}</h1>
-                <p class="text-green-100 text-lg">{{ $courseData['code'] }}</p>
-                @if($courseData['enrolled'])
+                <h1 class="text-3xl font-bold mb-2">{{ $enrolledCourse->title }}</h1>
+                <p class="text-green-100 text-lg">{{ $enrolledCourse->code }}</p>
+                @if($enrolledCourse)
                     <div class="flex items-center mt-3">
                         <i class="fas fa-graduation-cap mr-2"></i>
-                        <span class="text-sm">Enrolled since {{ $courseData['enrollmentDate'] }}</span>
+                        <span class="text-sm">Enrolled since {{ $enrolledCourse->pivot?->created_at }}</span>
                     </div>
                 @endif
             </div>
@@ -27,8 +27,6 @@
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-24">
                 <h3 class="font-semibold text-gray-800 mb-4">Course Content</h3>
 
-
-
                 <!-- Course Navigation -->
                 <div class="space-y-2">
                     <a href="#overview"
@@ -36,22 +34,16 @@
                         <i class="fas fa-info-circle mr-3"></i>
                         <span>Course Overview</span>
                     </a>
-                    <a href="#materials"
+                    <a href="#assignments"
                         class="course-nav-item flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800">
                         <i class="fas fa-book mr-3"></i>
-                        <span>Course Materials</span>
+                        <span>Course Assignments</span>
                     </a>
-                    <a href="#modules"
+                    <a href="#course-contents"
                         class="course-nav-item flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800">
                         <i class="fas fa-list mr-3"></i>
                         <span>Learning Modules</span>
                     </a>
-                    <div class="mt-4">
-                        <button class="btn-secondary w-full" onclick="unenrollFromCourse({{ $courseData['id'] }})">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            Unenroll
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Enrollment Status -->
@@ -59,7 +51,7 @@
                     <div class="text-center">
                         <i class="fas fa-graduation-cap text-blue-600 text-2xl mb-2"></i>
                         <p class="text-sm font-medium text-blue-800">Enrolled</p>
-                        <p class="text-xs text-blue-600">Since {{ $courseData['enrollmentDate'] }}</p>
+                        <p class="text-xs text-blue-600">Since {{ $enrolledCourse->pivot?->created_at->format('M d, Y') }}</p>
                     </div>
                 </div>
             </div>
@@ -76,7 +68,7 @@
                     <div class="mb-8">
                         <h4 class="font-semibold text-gray-700 mb-3">Description</h4>
                         <p class="text-gray-600 leading-relaxed">
-                            {{ $courseData['description'] }}
+                            {{ $enrolledCourse->description }}
                         </p>
                     </div>
 
@@ -93,8 +85,10 @@
                                     <h5 class="text-gray-700">Instructor:</h5>
                                     <div class="text-end">
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $courseData['instructor']['name'] }}</p>
-                                            <p class="text-xs text-gray-500">{{ $courseData['instructor']['email'] }}</p>
+                                            <p class="font-medium text-gray-800">
+                                                {{ $enrolledCourse->instructor?->detail?->full_name }}
+                                            </p>
+                                            <p class="text-xs text-gray-500">{{ $enrolledCourse->instructor?->email }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -105,148 +99,139 @@
             </div>
 
             <!-- Course Materials Section -->
-            <div id="materials" class="course-section hidden">
+            <div id="assignments" class="course-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Course Materials</h3>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Assignments</h3>
 
-                    <!-- Textbooks -->
-                    <div class="mb-8">
-                        <h4 class="font-semibold text-gray-700 mb-4">Required Textbooks</h4>
-                        <div class="space-y-4">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-md transition">
+                    <div class="space-y-4">
+                        <!-- Assignment 1 -->
+                        @forelse ($assignments as $assignment)
+                            <div class="bg-gray-50 border {{ $assignment->border_color }} rounded-xl p-6 hover:shadow-md transition">
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
-                                        <h5 class="font-medium text-gray-800">Introduction to Programming with Python</h5>
-                                        <p class="text-sm text-gray-600">Author: John Zelle</p>
-                                        <p class="text-xs text-gray-500">Publisher: Franklin, Beedle & Associates</p>
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <div class="w-10 h-10 {{ $assignment->icon_color }} rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-tasks"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-gray-800">{{ $assignment->title }}</h5>
+                                                <div class="flex items-center space-x-4 mt-1">
+                                                    <span class="text-xs text-gray-500">
+                                                        <i class="far fa-calendar mr-1"></i>Due:
+                                                        {{ $assignment->formatted_due_date }}
+                                                    </span>
+                                                    <span
+                                                        class="px-2 py-1 {{ $assignment->status_badge['class'] }} rounded-full text-xs font-medium">
+                                                        {{ $assignment->status_badge['text'] }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-3 ml-13">
+                                            {{ $assignment->description }}
+                                        </p>
                                     </div>
-                                    <div class="flex space-x-2">
-                                        <button class="text-blue-600 hover:text-blue-800 text-sm">
-                                            <i class="fas fa-download mr-1"></i>Download
-                                        </button>
-                                        <button class="text-green-600 hover:text-green-800 text-sm">
-                                            <i class="fas fa-external-link-alt mr-1"></i>View
-                                        </button>
-                                    </div>
+                                    <a
+                                        href="{{ route('student.course.assignment', [$enrolledCourse, $assignment]) }}"
+                                        class="ml-4 px-4 py-2 {{ $assignment->icon_color }} {{ $assignment->border_color }} {{ $assignment->hover_color }} rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                                        View Details
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Lecture Slides -->
-                    <div class="mb-8">
-                        <h4 class="font-semibold text-gray-700 mb-4">Lecture Slides</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-file-powerpoint text-blue-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-medium text-gray-800">Week 1: Introduction</h5>
-                                        <p class="text-xs text-gray-500">Updated 2 days ago</p>
-                                    </div>
-                                    <button class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-download"></i>
-                                    </button>
+                        @empty
+                            <div class="text-center py-16">
+                                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-tasks text-gray-400 text-3xl"></i>
                                 </div>
+                                <h4 class="text-lg font-semibold text-gray-700 mb-2">No Assignments Yet</h4>
+                                <p class="text-gray-500 text-sm">
+                                    Your instructor hasn't posted any assignments for this course yet.<br>
+                                    Check back later or contact your instructor for more information.
+                                </p>
                             </div>
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-file-powerpoint text-blue-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-medium text-gray-800">Week 2: Variables & Data Types</h5>
-                                        <p class="text-xs text-gray-500">Updated 1 week ago</p>
-                                    </div>
-                                    <button class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
 
-            <!-- Learning Modules Section -->
-            <div id="modules" class="course-section hidden">
+            <!-- Course Contents Section -->
+            <div id="course-contents" class="course-section hidden">
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Learning Modules</h3>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Course Contents</h3>
 
-                    <div class="space-y-6">
-                        <!-- Module 1 -->
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
-                            <div class="bg-white px-6 py-4 border-b border-gray-200">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                            1</div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-800">Introduction to Programming</h4>
-                                            <p class="text-sm text-gray-600">Week 1-2</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-green-600 font-medium">Completed</span>
-                                        <i class="fas fa-check-circle text-green-500"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <div class="space-y-3">
-                                    <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                                        <i class="fas fa-play-circle text-green-600"></i>
-                                        <span class="text-sm font-medium text-gray-800">What is Programming?</span>
-                                        <span class="ml-auto text-xs text-gray-500">15 min</span>
-                                    </div>
-                                    <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                                        <i class="fas fa-play-circle text-green-600"></i>
-                                        <span class="text-sm font-medium text-gray-800">Programming Languages
-                                            Overview</span>
-                                        <span class="ml-auto text-xs text-gray-500">20 min</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Course Contents Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Title</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Description</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Uploaded</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @forelse ($course_content as $content)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center space-x-3">
+                                                <i class="fas fa-file-video text-blue-600"></i>
+                                                <span class="font-medium text-gray-800">{{ $content->title }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <p class="text-sm text-gray-600">{{ $content->description }}</p>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <span
+                                                class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                                                {{ ucfirst($content->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <span
+                                                class="text-sm text-gray-600">{{ $content->created_at->format('M d, Y') }}</span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center space-x-2">
+                                                <a href="{{ Storage::url($content->file_path) }}" target="_blank"
+                                                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                    View
+                                                </a>
+                                                <a href="{{ Storage::url($content->file_path) }}" download class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                                    title="Download">
+                                                    <i class="fas fa-download"></i>
+                                                    Download
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center py-12">
+                                            <i class="fas fa-folder-open text-gray-300 text-5xl mb-4"></i>
+                                            <h4 class="text-lg font-semibold text-gray-700 mb-2">No Content Yet</h4>
+                                            <p class="text-gray-500 mb-4">Wait for instructors to upload course content</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
 
-                        <!-- Module 2 -->
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
-                            <div class="bg-white px-6 py-4 border-b border-gray-200">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                            2</div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-800">Control Structures</h4>
-                                            <p class="text-sm text-gray-600">Week 5-6</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm text-blue-600 font-medium">In Progress</span>
-                                        <i class="fas fa-clock text-blue-500"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <div class="space-y-3">
-                                    <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-                                        <i class="fas fa-play-circle text-blue-600"></i>
-                                        <span class="text-sm font-medium text-gray-800">If-Else Statements</span>
-                                        <span class="ml-auto text-xs text-gray-500">22 min</span>
-                                    </div>
-                                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                                        <i class="fas fa-lock text-gray-400"></i>
-                                        <span class="text-sm font-medium text-gray-500">Loops and Iteration</span>
-                                        <span class="ml-auto text-xs text-gray-400">28 min</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
+
+                    <!-- Empty State (hide when there are contents) -->
+                    <!-- <div class="text-center py-12 hidden">
+                                                        <i class="fas fa-folder-open text-gray-300 text-5xl mb-4"></i>
+                                                        <h4 class="text-lg font-semibold text-gray-700 mb-2">No Content Yet</h4>
+                                                        <p class="text-gray-500 mb-4">Start by uploading your first course content</p>
+                                                        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                            Upload Content
+                                                        </button>
+                                                    </div> -->
                 </div>
             </div>
 
@@ -278,6 +263,23 @@
 
             .course-section.hidden {
                 display: none;
+            }
+
+            .course-section {
+                margin-top: 2rem;
+            }
+
+            .ml-13 {
+                margin-left: 3.25rem;
+            }
+
+            table {
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            tbody tr:last-child td {
+                border-bottom: none;
             }
         </style>
     @endpush

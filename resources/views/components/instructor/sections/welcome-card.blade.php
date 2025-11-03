@@ -16,12 +16,6 @@
                     Create New Course
                 </button>
             @endif
-            @if($showViewAnalytics)
-                <button class="bg-white bg-opacity-20 backdrop-blur text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-30 transition" onclick="window.location.href='{{ route('instructor.analytics') }}'">
-                    <i class="fas fa-chart-bar mr-2"></i>
-                    View Analytics
-                </button>
-            @endif
         </div>
     </div>
 </div>

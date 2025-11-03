@@ -5,44 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CourseRequest;
 use App\Models\Course;
 use App\Models\CourseContent;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CourseController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
+        $user = Auth::user();
         // Get courses from database
-        $allCourses = Course::all()->map(function ($course) {
-            return [
-                'id' => $course->id,
-                'title' => $course->title,
-                'code' => $course->code,
-                'description' => html_entity_decode($course->description),
-                'instructor' => 'Dr. Lorenz', // Default instructor name
-                'enrollment_count' => $course->enrollment_count,
-                'difficulty' => $course->difficulty,
-                'status' => $course->status,
-                'created_at' => $course->created_at,
-                'icon' => 'fas fa-book',
-                'students' => $course->enrollment_count,
-                'assignments' => 0
-            ];
-        });
+        $allCourses = Course::withCount(['assignments', 'enrollments'])->where('instructor_id', $user->id)->get();
 
-        return view('instructor.courses', compact('user', 'notifications', 'allCourses'));
+        return view('instructor.courses', compact('allCourses'));
     }
 
     /**
@@ -50,11 +30,9 @@ class CourseController extends Controller
      */
     public function create()
     {
-        //
-        $user = Auth::user();
+        $this->authorize('create', Course::class);
 
-        $notifications = ['assignments' => 8, 'students' => 3];
-        return view('instructor.course.create', compact('user', 'notifications'));
+        return view('instructor.course.create');
     }
 
     /**
@@ -63,6 +41,8 @@ class CourseController extends Controller
     public function store(CourseRequest $request)
     {
         //
+        $this->authorize('create', Course::class);
+
         $instructor_id = Auth::id();
 
         $validated = $request->validated();
@@ -90,58 +70,21 @@ class CourseController extends Controller
     public function show(string $id)
     {
         //
+        
         $user = Auth::user();
-
+        
         $notifications = ['assignments' => 8, 'students' => 3];
-
+        
         // Get course from database
-        $course = Course::find($id);
-
+        $course = Course::withCount(['assignments', 'enrollments'])->find($id);
+        
         if (!$course) {
             abort(404);
         }
 
-        // Convert to the format expected by the view
-        $courseData = [
-            'id' => $course->id,
-            'title' => $course->title,
-            'code' => $course->code,
-            'description' => $course->description,
-            'instructor' => [
-                'name' => 'Dr. Lorenz',
-                'department' => 'Computer Science Department',
-                'email' => 'dr.lorenz@clsu.edu.ph',
-                'initials' => 'DL'
-            ],
-            'enrollment_count' => $course->enrollment_count,
-            'difficulty' => $course->difficulty,
-            'status' => $course->status,
-            'assignments' => 8, // Default assignment count
-            'students' => $course->enrollment_count // For compatibility
-        ];
+        $this->authorize('view', $course);
 
-        $students = [
-            ['id' => 1, 'name' => 'Francis', 'email' => 'john.doe@student.clsu.edu.ph', 'status' => 'Active', 'lastActivity' => '2h ago'],
-            ['id' => 2, 'name' => 'Lorenz', 'email' => 'jane.smith@student.clsu.edu.ph', 'status' => 'Active', 'lastActivity' => '4h ago'],
-            ['id' => 3, 'name' => 'Mike Johnson', 'email' => 'mike.johnson@student.clsu.edu.ph', 'status' => 'Inactive', 'lastActivity' => '1d ago'],
-        ];
-
-        // Get course contents from database
-        $contents = CourseContent::where('course_id', $id)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($content) {
-                return [
-                    'id' => $content->id,
-                    'title' => $content->title,
-                    'description' => $content->description,
-                    'status' => $content->status,
-                    'file_path' => $content->file_path,
-                    'uploaded_at' => $content->uploaded_at->format('M j, Y g:i A')
-                ];
-            });
-
-        return view('instructor.course.show', compact('user', 'notifications', 'courseData', 'students', 'contents'));
+        return view('instructor.course.show', compact('course'));
     }
 
     /**
@@ -150,16 +93,17 @@ class CourseController extends Controller
     public function edit(string $id)
     {
         //
+        
         $user = Auth::user();
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
+        
         // Get course from database
         $course = Course::findOrFail($id);
-
+        
         if (!$course) {
             abort(404);
         }
+
+        $this->authorize('update', $course);
 
         // Convert to the format expected by the view
         $courseData = [
@@ -171,7 +115,7 @@ class CourseController extends Controller
             'status' => $course->status,
         ];
 
-        return view('instructor.course.edit', compact('user', 'notifications', 'courseData'));
+        return view('instructor.course.edit', compact('courseData'));
     }
 
     /**
@@ -180,6 +124,8 @@ class CourseController extends Controller
     public function update(CourseRequest $request, Course $course)
     {
         //
+        $this->authorize('update', $course);
+
         $validated = $request->validated();
         $updateData = collect($validated)->only(['title', 'code', 'difficulty', 'status'])->toArray();
         $updateData['description'] = $request->input('description');
@@ -196,6 +142,8 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         //
+        $this->authorize('delete', $course);
+
         if ($course->instructor_id !== Auth::id()) {
             abort(403, 'You are not authorized to delete this course.');
         }

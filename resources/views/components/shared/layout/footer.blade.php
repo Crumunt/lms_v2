@@ -22,17 +22,6 @@
                 <p class="text-sm text-gray-600 mb-4">
                     Empowering students with modern learning tools and resources for academic excellence.
                 </p>
-                <div class="flex space-x-3">
-                    <a href="#" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-green-600 hover:text-white transition">
-                        <i class="fab fa-facebook-f text-xs"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-green-600 hover:text-white transition">
-                        <i class="fab fa-twitter text-xs"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-green-600 hover:text-white transition">
-                        <i class="fab fa-instagram text-xs"></i>
-                    </a>
-                </div>
             </div>
             
             <div>
