@@ -98,67 +98,7 @@ class InstructorController extends Controller
         return view('instructor.students');
     }
 
-    public function grades()
-    {
-        return view('instructor.grades');
-    }
-
-    public function analytics()
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        return view('instructor.analytics', compact('user', 'notifications'));
-    }
-
-    public function discussions()
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        return view('instructor.discussions', compact('user', 'notifications'));
-    }
-
-    public function resources()
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        return view('instructor.resources', compact('user', 'notifications'));
-    }
-
-    public function schedule()
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        return view('instructor.placeholder', compact('user', 'notifications'))->with([
-            'title' => 'Schedule',
-            'icon' => 'fas fa-calendar-alt',
-            'description' => 'Manage your class schedule and office hours'
-        ]);
-    }
-
+  
     public function showStudent($id)
     {
         $user = [
@@ -173,23 +113,6 @@ class InstructorController extends Controller
             'title' => 'Student Details',
             'icon' => 'fas fa-user',
             'description' => 'View student information and progress'
-        ]);
-    }
-
-    public function settings()
-    {
-        $user = [
-            'name' => 'Dr. Lorenz',
-            'department' => 'Computer Science',
-            'initials' => 'JS'
-        ];
-
-        $notifications = ['assignments' => 8, 'students' => 3];
-
-        return view('instructor.placeholder', compact('user', 'notifications'))->with([
-            'title' => 'Settings',
-            'icon' => 'fas fa-cog',
-            'description' => 'Manage your account and preferences'
         ]);
     }
 

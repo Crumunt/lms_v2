@@ -16,12 +16,6 @@
                     Continue Learning
                 </button>
             @endif
-            @if($showViewProgress)
-                <button class="bg-white bg-opacity-20 backdrop-blur text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-30 transition">
-                    <i class="fas fa-chart-bar mr-2"></i>
-                    View Progress
-                </button>
-            @endif
         </div>
     </div>
 </div>

@@ -145,23 +145,6 @@
                     <div class="text-4xl font-bold text-amber-600 mb-2">{{ $assignment->total_points }}</div>
                     <div class="text-sm text-gray-600">Total Points</div>
                 </div>
-
-                @if(true)
-                    <div class="mt-6 pt-6 border-t border-gray-200">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-600">Average Score</span>
-                            <span class="text-lg font-bold text-gray-800">
-                                {{ number_format(11, 1) }}
-                            </span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Highest Score</span>
-                            <span class="text-lg font-bold text-green-600">
-                                {{ 100 }}
-                            </span>
-                        </div>
-                    </div>
-                @endif
             </div>
 
             {{-- Schedule Card --}}

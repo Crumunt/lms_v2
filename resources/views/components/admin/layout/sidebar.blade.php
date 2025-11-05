@@ -41,8 +41,8 @@
         </a>
         
         <!-- Instructors -->
-        <a href="{{ route('admin.instructors') }}" 
-           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.instructors' ? 'active' : '' }}">
+        <a href="{{ route('admin.instructors.index') }}" 
+           class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg mb-2 {{ Route::currentRouteName() === 'admin.instructors.index' ? 'active' : '' }}">
             <i class="fas fa-chalkboard-teacher sidebar-icon mr-3 text-lg"></i>
             <span>Instructors</span>
         </a>
@@ -59,17 +59,6 @@
             @endif
         </a>
     </nav>
-    
-    <!-- Bottom Section -->
-    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-white/20">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="w-full sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white hover:bg-white/10 transition-all duration-200">
-                <i class="fas fa-sign-out-alt sidebar-icon mr-3 text-lg"></i>
-                <span>Logout</span>
-            </button>
-        </form>
-    </div>
 </div>
 
 <!-- Mobile Menu Button -->

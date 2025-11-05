@@ -9,4 +9,6 @@ enum UserStatus:string
     case active = 'active';
     case inactive = 'inactive';
     case deactivated = 'deactivated';
+    case approved = 'approved';
+    case rejected = 'rejected';
 }

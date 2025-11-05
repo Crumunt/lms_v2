@@ -8,10 +8,6 @@
                 <h1 class="text-3xl font-bold text-gray-800">Instructor Management</h1>
                 <p class="text-gray-600 mt-2">Manage all instructors in the system</p>
             </div>
-            <a href="{{ route('admin.instructors.create') }}" class="btn-primary">
-                <i class="fas fa-plus mr-2"></i>
-                Add New Instructor
-            </a>
         </div>
     </div>
 

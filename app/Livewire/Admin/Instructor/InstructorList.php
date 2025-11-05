@@ -71,7 +71,8 @@ class InstructorList extends Component
                 $q->whereHas('detail', function ($q2) {
                     $q2->where('full_name', 'like', '%' . $this->searchTerm . '%');
                 });
-            });
+            })
+            ->orWhere('email', 'like', "%{$this->searchTerm}%");
         }
 
         // Apply status filter

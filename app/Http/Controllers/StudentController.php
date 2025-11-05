@@ -28,15 +28,34 @@ class StudentController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $userId = $user->id;
 
-        $enrolledCourses = $user->courses->count();
+        $enrolledCourses = $user->courses()->count();
 
         // ! TO BE FILLED
-        $activities = Activity::causedBy($user)->latest()->get();
-        $student_id = $user->id;
-        $assignments = $user->enrolledAssignments()->where('status', 'published')->latest()->get();
+        $activities = Activity::causedBy($user)
+            ->latest()
+            ->take(5)
+            ->get();
 
-        $stats = [
+        $assignments = Assignment::whereIn('course_id', $user->courses()->pluck('id'))
+            ->where('status', 'published')
+            ->whereDoesntHave('submissions', function ($query) use ($userId) {
+                $query->where('student_id', $userId)
+                    ->whereIn('status', ['submitted', 'graded']);
+            })
+            ->with(['submissions' => fn($q) => $q->where('student_id', $userId)])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $submittedAssignments = AssignmentSubmission::where('student_id', $userId)
+            ->whereIn('status', ['submitted', 'graded'])
+            ->count();
+
+        $completedCourses = $user->courses()->where('status', 'completed')->count();
+
+        $stats = collect([
             [
                 'icon' => 'fas fa-book',
                 'iconBg' => 'bg-gradient-to-br from-blue-400 to-blue-600',
@@ -47,25 +66,18 @@ class StudentController extends Controller
             [
                 'icon' => 'fas fa-check-circle',
                 'iconBg' => 'bg-gradient-to-br from-green-400 to-green-600',
-                'value' => 0,
+                'value' => $completedCourses,
                 'label' => 'Completed Courses',
                 'progress' => 85
             ],
             [
                 'icon' => 'fas fa-trophy',
                 'iconBg' => 'bg-gradient-to-br from-purple-400 to-purple-600',
-                'value' => 0,
-                'label' => 'Average Grade',
-                'progress' => 92
+                'value' => $submittedAssignments,
+                'label' => 'Submitted Assignments',
+                'progress' => 85
             ],
-            [
-                'icon' => 'fas fa-clock',
-                'iconBg' => 'bg-gradient-to-br from-orange-400 to-orange-600',
-                'value' => '0h',
-                'label' => 'Study Time',
-                'progress' => 60
-            ]
-        ];
+        ]);
 
         return view('student.dashboard', compact('user', 'activities', 'assignments', 'stats'));
     }
@@ -151,7 +163,7 @@ class StudentController extends Controller
         $assignment->is_urgent = AssignmentHelper::isUrgent($assignment->due_date);
 
         $submission = $assignment->submissions()?->first() ?? null;
-        
+
         return view('student.course.assignment.show', compact('course', 'assignment', 'submission'));
     }
 
@@ -184,15 +196,15 @@ class StudentController extends Controller
             $assignment = AssignmentSubmission::create($validated);
 
             activity('assignment submission')
-            ->performedOn($assignment)
-            ->withProperties([
-                'course_id' => $course->id,
-                'course_title' => $course->title,
-                'course_code' => $course->code,
-                'assignment_id' => $assignment->id,
-                'assignment_title' => $assignment->title
-            ])
-            ->log('Student has submitted assignment.');
+                ->performedOn($assignment)
+                ->withProperties([
+                    'course_id' => $course->id,
+                    'course_title' => $course->title,
+                    'course_code' => $course->code,
+                    'assignment_id' => $assignment->id,
+                    'assignment_title' => $assignment->title
+                ])
+                ->log('Student has submitted assignment.');
         } catch (\Throwable $th) {
             Log::error('Something went wrong with assignment submission ' . $th->getMessage());
             abort(500);

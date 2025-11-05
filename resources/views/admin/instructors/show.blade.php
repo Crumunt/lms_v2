@@ -13,7 +13,7 @@
                     <i class="fas fa-edit mr-2"></i>
                     Edit Instructor
                 </a>
-                <a href="{{ route('admin.instructors') }}" class="btn-secondary">
+                <a href="{{ route('admin.instructors.index') }}" class="btn-secondary">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Back to Instructors
                 </a>

@@ -25,11 +25,6 @@
     <!-- Mobile Overlay -->
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Floating Action Button -->
-    <button class="fab" onclick="scrollToTop()">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
     @push('scripts')
         <script>
             // Mobile sidebar toggle

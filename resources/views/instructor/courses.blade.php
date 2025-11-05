@@ -7,7 +7,7 @@
             <p class="text-gray-600 mt-2">Manage and organize your course materials</p>
         </div>
 
-        @can('create', $allCourses)
+        @can('create', [\App\Models\Course::class,$allCourses])
             <button class="btn-primary" onclick="window.location.href='{{ route('instructor.courses.create') }}'">
                 <i class="fas fa-plus mr-2"></i>
                 Create New Course
@@ -21,7 +21,7 @@
         @empty
             <div class="col-span-full text-center py-10">
                 <p class="text-gray-500 text-lg font-medium">No courses created yet.</p>
-                @cannot('create', $allCourses)
+                @cannot('create', [\App\Models\Course::class,$allCourses])
                 <p class="text-gray-600 font-medium mt-3">Wait for the admin to approve of your account before you can create courses.</p>
                 @endcannot
             </div>

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Course;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseContentRequest;
 use App\Models\Course;
 use App\Models\CourseContent;
@@ -9,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class CourseContentController extends Controller
 {
@@ -101,41 +101,6 @@ class CourseContentController extends Controller
         return redirect()
             ->route('instructor.courses.content.index', $course)
             ->with('success', 'Content uploaded successfully!');
-    }
-
-    /**
-     * Serve course content files.
-     */
-    public function serve(Request $request, $instructor, $file)
-    {
-        try {
-            // Build file path
-            $filePath = "course_contents/{$instructor}/{$file}";
-
-            // Check if file exists
-            if (!Storage::disk('public')->exists($filePath)) {
-                abort(404, 'File not found');
-            }
-
-            // Get file info
-            $fullPath = Storage::disk('public')->path($filePath);
-            $mimeType = Storage::disk('public')->mimeType($filePath);
-
-            // Validate it's a PDF
-            if ($mimeType !== 'application/pdf') {
-                abort(400, 'Invalid file type');
-            }
-
-            // Set headers for PDF viewing
-            return response()->file($fullPath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
-                'Cache-Control' => 'public, max-age=3600',
-            ]);
-
-        } catch (\Exception $e) {
-            abort(404, 'File not found');
-        }
     }
 
     public function download(Course $course, CourseContent $courseContent)

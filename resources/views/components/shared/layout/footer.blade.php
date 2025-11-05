@@ -34,7 +34,6 @@
             <div>
                 <h4 class="font-semibold text-gray-800 mb-4">Resources</h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="{{ route('student.resources') }}" class="text-gray-600 hover:text-green-600 transition">Library</a></li>
                     <li><a href="#" class="text-gray-600 hover:text-green-600 transition">Study Materials</a></li>
                     <li><a href="#" class="text-gray-600 hover:text-green-600 transition">Tutorials</a></li>
                     <li><a href="#" class="text-gray-600 hover:text-green-600 transition">Help Center</a></li>

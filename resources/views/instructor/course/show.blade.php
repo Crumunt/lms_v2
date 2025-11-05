@@ -8,16 +8,16 @@
                 <p class="text-gray-600 mt-2">{{ $course->code }} • {{ $course->enrollment_count }} students</p>
             </div>
             <div class="flex space-x-3">
-                @can('update', $course)
+                @can('update', [\App\Models\Course::class, $course])
                     <a href="{{ route('instructor.courses.edit', $course) }}" class="btn-secondary">
                         <i class="fas fa-edit mr-2"></i>
                         Edit Course
                     </a>
                 @endcan
-                @can('create')
+                @can('create', \App\Models\Course::class)
                     <a href="{{ route('instructor.courses.assignments.index', $course) }}" class="btn-primary">
-                        <i class="fas fa-plus mr-2"></i>
-                        New Assignment
+                        <i class="fas fa-pen mr-2"></i>
+                        Assignments
                     </a>
                     <a href="{{ route('instructor.courses.content.index', $course) }}" class="btn-primary">
                         <i class="fas fa-book mr-2"></i>

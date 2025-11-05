@@ -85,6 +85,8 @@
                             </option>
                             <option value="approved" {{ $courseData['status'] === 'approved' ? 'selected' : '' }}>Approved
                             </option>
+                             <option value="approved" {{ $courseData['status'] === 'completed' ? 'selected' : '' }}>Completed
+                            </option>
                             <option value="draft" {{ $courseData['status'] === 'draft' ? 'selected' : '' }}>Draft</option>
                             <option value="archived" {{ $courseData['status'] === 'archived' ? 'selected' : '' }}>Archived
                             </option>

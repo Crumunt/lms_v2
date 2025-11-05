@@ -46,7 +46,7 @@ class EnrollmentPolicy
      */
     public function unenroll(User $user, $enrollment): bool
     {
-        return $user->id === $enrollment?->first()->student_id && $user->detail?->status->name === 'approved';
+        return $user->id === $enrollment?->first()->student_id;
     }
 
     /**

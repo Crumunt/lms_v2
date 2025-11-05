@@ -73,7 +73,7 @@ class SocialiteController extends Controller
 
 
         } catch (Exception $e) {
-            return redirect('/login')->with('error', 'Unable to login. Please try again.');
+            return redirect('/')->with('error', 'Unable to login. Please try again.');
         }
     }
 

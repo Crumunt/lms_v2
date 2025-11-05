@@ -68,15 +68,9 @@ class User extends Authenticatable
 
     public function enrolledAssignments()
     {
-        return $this->hasManyThrough(
-            Assignment::class,
-            Enrollment::class, // or your pivot model
-            'student_id',      // Foreign key on enrollments table
-            'course_id',    // Foreign key on assignments table
-            'id',           // Local key on users table
-            'course_id'     // Local key on enrollments table
-        );
+        return Assignment::whereIn('course_id', $this->courses()->pluck('id'));
     }
+
 
     public function taughtCourses()
     {
@@ -92,15 +86,15 @@ class User extends Authenticatable
     }
 
 
-public function scopeWithStatusData($query)
-{
-    return $query->paginate(10)->map(function ($user) {
-        $status = $user->detail?->status->name;
-        $user->status_badge = AdminUserHelper::getStatusBadge($status);
-        $user->status_class = AdminUserHelper::getStatusBadgeClass($status);
-        $user->status_text_class = AdminUserHelper::getStatusTextClass($status);
-        $user->status_label = AdminUserHelper::getStatusLabel($status);
-        return $user;
-    });
-}
+    public function scopeWithStatusData($query)
+    {
+        return $query->paginate(10)->map(function ($user) {
+            $status = $user->detail?->status->name;
+            $user->status_badge = AdminUserHelper::getStatusBadge($status);
+            $user->status_class = AdminUserHelper::getStatusBadgeClass($status);
+            $user->status_text_class = AdminUserHelper::getStatusTextClass($status);
+            $user->status_label = AdminUserHelper::getStatusLabel($status);
+            return $user;
+        });
+    }
 }

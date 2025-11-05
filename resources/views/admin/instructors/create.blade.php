@@ -8,7 +8,7 @@
                 <h1 class="text-3xl font-bold text-gray-800">Create New Instructor</h1>
                 <p class="text-gray-600 mt-2">Add a new instructor to the system</p>
             </div>
-            <a href="{{ route('admin.instructors') }}" class="btn-secondary">
+            <a href="{{ route('admin.instructors.index') }}" class="btn-secondary">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to Instructors
             </a>
@@ -93,7 +93,7 @@
 
             <!-- Submit Buttons -->
             <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-                <a href="{{ route('admin.instructors') }}" class="btn-secondary">
+                <a href="{{ route('admin.instructors.index') }}" class="btn-secondary">
                     Cancel
                 </a>
                 <button type="submit" class="btn-primary">

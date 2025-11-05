@@ -19,15 +19,6 @@
         
         <!-- Right Section -->
         <div class="flex items-center space-x-4">
-            <!-- Search Bar -->
-            <div class="relative hidden md:block">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <input type="text" 
-                       class="search-input block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" 
-                       placeholder="Search...">
-            </div>
             
             <!-- User Menu -->
             <div class="flex items-center space-x-3">
@@ -49,22 +40,8 @@
                                 <p class="text-xs text-gray-500">{{ $user->roles->first()->name }}</p>
                             </div>
                             
-                            <!-- Menu Items -->
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                <i class="fas fa-user mr-3 text-gray-400"></i>
-                                Profile
-                            </a>
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                <i class="fas fa-cog mr-3 text-gray-400"></i>
-                                Settings
-                            </a>
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                <i class="fas fa-question-circle mr-3 text-gray-400"></i>
-                                Help
-                            </a>
-                            
                             <!-- Logout -->
-                            <div class="border-t border-gray-100 mt-2 pt-2">
+                            <div class="mt-2 pt-2">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">

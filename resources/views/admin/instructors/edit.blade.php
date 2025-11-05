@@ -9,7 +9,7 @@
                 <h1 class="text-3xl font-bold text-gray-800">Edit Instructor</h1>
                 <p class="text-gray-600 mt-2">Update instructor information</p>
             </div>
-            <a href="{{ route('admin.instructors') }}" class="btn-secondary">
+            <a href="{{ route('admin.instructors.index') }}" class="btn-secondary">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to Instructors
             </a>
@@ -25,8 +25,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Name -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                    <input type="text" id="name" name="name" value="{{ old('name', $instructor->name) }}"
+                    <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" value="{{ old('name', $instructor->detail?->full_name) }}"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('name') border-red-500 @enderror"
                         placeholder="Enter instructor's full name" required>
                     @error('name')
@@ -51,7 +51,7 @@
                     <textarea id="address" name="address" rows="3"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('address') border-red-500 @enderror"
                         placeholder="Enter instructor's address"
-                        required>{{ old('address', $instructor->address) }}</textarea>
+                        required>{{ old('address', $instructor->detail?->address) }}</textarea>
                     @error('address')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -64,11 +64,11 @@
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('status') border-red-500 @enderror"
                         required>
                         <option value="">Select status</option>
-                        <option value="pending" {{ old('status', $instructor->status) === 'pending' ? 'selected' : '' }}>
+                        <option value="pending" {{ old('status', $instructor->detail?->status->name) === 'pending' ? 'selected' : '' }}>
                             Pending</option>
-                        <option value="approved" {{ old('status', $instructor->status) === 'approved' ? 'selected' : '' }}>
+                        <option value="approved" {{ old('status', $instructor->detail?->status->name) === 'approved' ? 'selected' : '' }}>
                             Approved</option>
-                        <option value="rejected" {{ old('status', $instructor->status) === 'rejected' ? 'selected' : '' }}>
+                        <option value="rejected" {{ old('status', $instructor->detail?->status->name) === 'rejected' ? 'selected' : '' }}>
                             Rejected</option>
                     </select>
                     @error('status')
@@ -79,7 +79,7 @@
 
             <!-- Submit Buttons -->
             <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-                <a href="{{ route('admin.instructors') }}" class="btn-secondary">
+                <a href="{{ route('admin.instructors.index') }}" class="btn-secondary">
                     Cancel
                 </a>
                 <button type="submit" class="btn-primary">

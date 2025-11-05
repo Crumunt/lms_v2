@@ -79,11 +79,6 @@
             <i class="fas fa-history mr-3 text-blue-600"></i>
             Recent Activities
         </h2>
-        @if($activities->count() > 5)
-            <a href="{{ route('activities.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                View All
-            </a>
-        @endif
     </div>
     
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
